@@ -1,10 +1,5 @@
-import {
-  PrismaClient,
-  Categorie,
-  Produit,
-  Stock,
-  AjustementsDeStock,
-} from "@prisma/client";
+"use server";
+import { Categorie, Produit, Stock, AjustementsDeStock } from "@prisma/client";
 import { prisma } from "./prisma";
 
 // Ajouter un produit
@@ -53,6 +48,22 @@ export async function ajouterCategorie(nom: string): Promise<Categorie> {
     data: {
       nom,
     },
+  });
+}
+
+//Obtenir Les categories
+
+export async function fetchCategories(
+  searchQuery: string = "",
+  limit: number = 5
+) {
+  return await prisma.categorie.findMany({
+    where: {
+      nom: {
+        contains: searchQuery,
+      },
+    },
+    take: limit,
   });
 }
 

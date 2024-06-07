@@ -1,0 +1,2 @@
+add tow header component 
+if the pathname inculdes new render the new component else the other one 
