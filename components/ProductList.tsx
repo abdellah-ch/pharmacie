@@ -42,7 +42,7 @@ const ProductList = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
-  console.log(products);
+  // console.log(products);
   const columns = [
     {
       key: "designation",

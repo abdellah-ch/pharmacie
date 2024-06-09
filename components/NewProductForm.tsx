@@ -81,7 +81,7 @@ const NewProductForm = () => {
       categorie_id: categorie_id,
       Seuil_reapprovisionnement: data.SeuilReapprovisionnement,
     };
-    console.log(inputs);
+    // console.log(inputs);
 
     ajouterProduitAvecStock(
       inputs.code_produit,
