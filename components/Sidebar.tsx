@@ -24,7 +24,7 @@ import { usePathname } from "next/navigation";
 const Sidebar = () => {
   const pathname = usePathname();
 
-  console.log(typeof pathname);
+  // console.log(typeof pathname);
 
   const isCollapsed = true;
   return (

@@ -1,4 +1,6 @@
 "use client";
+import * as React from "react";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -9,6 +11,17 @@ import Image from "next/image";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import { Categorie } from "@prisma/client";
+import "@uploadthing/react/styles.css";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { format, getYear } from "date-fns";
+
 import {
   Dialog,
   DialogContent,
@@ -26,8 +39,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ChangeEvent, useEffect, useState } from "react";
-import { fetchCategories, ajouterCategorie } from "@/lib/Produit";
+import {
+  fetchCategories,
+  ajouterCategorie,
+  ajouterProduitAvecStock,
+} from "@/lib/Produit";
 import { Label } from "@radix-ui/react-dropdown-menu";
+import { UploadButton } from "@/lib/uploadthing";
 
 type FormData = {
   Nom: string;
@@ -49,14 +67,51 @@ const NewProductForm = () => {
   } = useForm<FormData>();
 
   const onSubmit: SubmitHandler<FormData> = (data: FormData) => {
-    console.log(data);
-    console.log(errors);
-  };
+    // console.log(data);
+    // console.log(errors);
+    const inputs = {
+      code_produit: data.CodeProduit,
+      description: data.Description,
+      designation: data.Nom,
+      prix_Achat: data.PrixAchat,
+      prix_Vente: data.PrixVente,
+      date_expiration: date,
+      quantite: data.Stock,
+      photo: imageUrl,
+      categorie_id: categorie_id,
+      Seuil_reapprovisionnement: data.SeuilReapprovisionnement,
+    };
+    console.log(inputs);
 
+    ajouterProduitAvecStock(
+      inputs.code_produit,
+      inputs.description,
+      inputs.designation,
+      inputs.prix_Achat,
+      inputs.prix_Vente,
+      inputs.date_expiration,
+      inputs.quantite,
+      inputs.photo,
+      inputs.categorie_id,
+      inputs.Seuil_reapprovisionnement
+    )
+      .then((res) => {
+        alert("inserted");
+      })
+      .catch((err) => {
+        alert(err);
+      });
+  };
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [categorie_id, setCategorie_id] = useState<number>(0);
+
+  // console.log(categorie_id);
   const [categories, setCategories] = useState<Categorie[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState<string>("");
+  const [date, setDate] = React.useState<Date | null>(null);
+  // if (date) console.log(date);
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -124,7 +179,11 @@ const NewProductForm = () => {
                   autoComplete="off"
                 /> */}
                 <div className="w-full">
-                  <Select>
+                  <Select
+                    onValueChange={(val) => {
+                      setCategorie_id(Number(val));
+                    }}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Sélectioner une Categorie" />
                     </SelectTrigger>
@@ -166,9 +225,7 @@ const NewProductForm = () => {
                         </DialogHeader>
                         <div className="grid gap-4 py-4">
                           <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="name" className="text-right">
-                              Name
-                            </Label>
+                            <Label className="text-right">Name</Label>
                             <Input
                               id="name"
                               className="col-span-3"
@@ -208,27 +265,52 @@ const NewProductForm = () => {
               {/* <button type="submit">ok</button> */}
             </div>
           </div>
-          <div className="w-[20%]">
-            <div className="flex items-center justify-center border-2 border-dashed border-zinc-300 dark:border-zinc-600 rounded-lg p-4">
-              <div className="text-center">
-                <Image
-                  alt="image upload"
-                  width={50}
-                  src={UploadIcon}
-                  className="mx-auto mb-4"
-                />
-                <p className="text-zinc-500 dark:text-zinc-400 text-xs">
-                  Faire glisser l’image ou les images ici ou{" "}
-                  <a href="#" className="text-blue-600">
-                    Parcourir les images
-                  </a>
-                </p>
-                <p className="text-zinc-400 dark:text-zinc-500 text-xs mt-2">
-                  Vous pouvez ajouter jusqu’à 15 images, chacune ne dépassant
-                  pas 5 Mo.
-                </p>
-              </div>
-            </div>
+          <div className="w-[25%] text-black flex flex-col gap-14 items-left ">
+            {imageUrl === "" ? (
+              <UploadButton
+                className="w-[45%] p-0"
+                endpoint="imageUploader"
+                onClientUploadComplete={(res) => {
+                  // Do something with the response
+                  // console.log("Files: ", res);
+                  setImageUrl(res[0].url);
+                }}
+                onUploadError={(error: Error) => {
+                  // Do something with the error.
+                  alert(`ERROR! ${error.message}`);
+                }}
+              />
+            ) : (
+              <img width={250} height={250} src={imageUrl} alt="none" />
+            )}
+            {/* <div>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-[80%] justify-start text-left font-normal",
+                      !date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {date ? (
+                      format(date, "PPP")
+                    ) : (
+                      <span>Date d'expiration</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div> */}
           </div>
         </div>
 
@@ -278,8 +360,8 @@ const NewProductForm = () => {
               </div>
 
               <div className="flex gap-20 items-center">
-                <label className="max-w-[30%] text-xs text-[#212529]">
-                  Seuil de réapprovisionnement
+                <label className="w-[30%] text-xs text-[#212529]">
+                  Stock alerte
                 </label>
                 <Input
                   type="number"
@@ -332,7 +414,7 @@ const NewProductForm = () => {
             Enregistrer
           </Button>
 
-          <Button className="bg-white text-black border border-gray-500 border-1">
+          <Button className="bg-white text-black border-gray-500 border-1 hover:bg-gray-200">
             Annuler
           </Button>
         </div>

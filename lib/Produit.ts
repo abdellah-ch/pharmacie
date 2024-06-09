@@ -7,9 +7,9 @@ export async function ajouterProduitAvecStock(
   code_produit: string,
   description: string,
   designation: string,
-  prix_Achat: string,
+  prix_Achat: number,
   prix_Vente: number,
-  date_expiration: Date,
+  date_expiration: Date | null,
   quantite: number,
   photo: string | null,
   categorie_id: number,
@@ -47,6 +47,19 @@ export async function ajouterCategorie(nom: string): Promise<Categorie> {
   return await prisma.categorie.create({
     data: {
       nom,
+    },
+  });
+}
+//obtenir les recent Produit
+export async function getRecentProducts(limit: number = 15) {
+  return await prisma.produit.findMany({
+    take: 15,
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      categorie: true,
+      stock: true,
     },
   });
 }

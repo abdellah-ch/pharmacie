@@ -19,9 +19,9 @@ model Produit {
   code_produit   String   @unique
   description    String
   designation    String
-  prix_Achat     String
-  prix_Vente     Float
-  date_expiration DateTime @db.Date   
+  prix_Achat     Int 
+  prix_Vente     Int 
+  date_expiration DateTime? @db.Date   
   quantite       Int
   photo          String?
   categorie_id   Int 
