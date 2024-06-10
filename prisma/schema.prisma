@@ -33,6 +33,8 @@ model Produit {
   categorie      Categorie @relation(fields: [categorie_id], references: [categorie_id])
   stock          Stock?
   ajustementsDeStock       AjustementsDeStock[]
+  commandeItems  CommandeItem[]
+
 }
 
 model Categorie {
@@ -63,4 +65,61 @@ model AjustementsDeStock {
 
   produit           Produit @relation(fields: [produit_id], references: [produit_id])
 }
- 
+
+enum CommandeStatus {
+  ENCOURS
+  LIVREE
+}
+
+enum ColisStatus {
+  EMBALLE
+  EXPEDIE
+  LIVREE
+}
+
+model Client {
+  client_id      Int       @id @default(autoincrement())
+  nom            String
+  email          String    @unique
+  nomSociete     String?
+  telephone      String?
+  adresse        String?
+  codePostal     Int?
+  Region         String?
+  commandes      Commande[]
+
+  createdAt      DateTime @default(now())
+}
+
+model Commande {
+  commande_id Int       @id @default(autoincrement())
+  client_id   Int
+  status      CommandeStatus @default(ENCOURS)
+  total       Float
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  client      Client    @relation(fields: [client_id], references: [client_id])
+  commandeItems  CommandeItem[]
+  colis       Colis[]
+}
+
+model Colis {
+  colis_id    Int       @id @default(autoincrement())
+  commande_id Int
+  status      ColisStatus @default(EMBALLE)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  commande    Commande  @relation(fields: [commande_id], references: [commande_id])
+}
+
+model CommandeItem {
+  commandeItem_id Int     @id @default(autoincrement())
+  commande_id     Int
+  produit_id      Int
+  quantite        Int
+
+  commande        Commande @relation(fields: [commande_id], references: [commande_id])
+  produit         Produit  @relation(fields: [produit_id], references: [produit_id])
+}

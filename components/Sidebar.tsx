@@ -6,7 +6,14 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 
-import { ShoppingCart, Home, Pen } from "lucide-react";
+import {
+  ShoppingCart,
+  Home,
+  Pen,
+  User,
+  ArrowDownUp,
+  FileCheck,
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
 // import { useState } from "react";
@@ -45,7 +52,7 @@ const Sidebar = () => {
         <Image height={50} src={logo} alt="logo" />
       </div>
       <Separator />
-      <div className="example overflow-y-scroll h-[90vh]">
+      <div className="example overflow-y-scroll h-[80vh]">
         <Nav
           links={[
             {
@@ -77,6 +84,47 @@ const Sidebar = () => {
                 pathname === "/Inventaire/Ajustement-Stock"
                   ? "default"
                   : "ghost",
+            },
+          ]}
+        />
+        <Separator />
+        <Nav
+          links={[
+            {
+              title: "Clients",
+              path: "/Vente/Clients",
+              label: "",
+              icon: User, // Placeholder for Lucid icon
+              variant: pathname === "/Vente/Clients" ? "default" : "ghost",
+            },
+            {
+              title: "Cammande Client",
+              path: "/Vente/Commande-Client",
+              label: "",
+              icon: ArrowDownUp, // Placeholder for Lucid icon
+              variant:
+                pathname === "/Vente/Commande-Client" ? "default" : "ghost",
+            },
+          ]}
+        />
+        <Separator />
+        <Nav
+          links={[
+            {
+              title: "Fournisseurs",
+              path: "/Achats/Fournisseurs",
+              label: "",
+              icon: User, // Placeholder for Lucid icon
+              variant:
+                pathname === "/Achats/Fournisseurs" ? "default" : "ghost",
+            },
+            {
+              title: "Bon de Cammande",
+              path: "/Achats/Bon-Commande",
+              label: "",
+              icon: FileCheck, // Placeholder for Lucid icon
+              variant:
+                pathname === "/Achats/Bon-Commande" ? "default" : "ghost",
             },
           ]}
         />
