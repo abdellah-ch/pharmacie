@@ -61,3 +61,51 @@ export const searchClients = async (searchQuery: string) => {
     throw new Error("Failed to search clients");
   }
 };
+
+//create the client command
+
+interface CommandeItemInput {
+  productName: string;
+  quantity: number;
+  monto: number;
+  product_id: number;
+  product_img: string | null;
+  stock: number | undefined;
+  prix_vente: number;
+}
+export const InsertCommandInfo = async (
+  clientId: number,
+  items: CommandeItemInput[]
+) => {
+  try {
+    let total = 0;
+
+    for (const item of items) {
+      total += item.monto;
+    }
+
+    //create
+    const newCommand = await prisma.commande.create({
+      data: {
+        client_id: clientId,
+        total,
+        status: "ENCOURS",
+        commandeItems: {
+          create: items.map((item) => ({
+            produit_id: item.product_id,
+            quantite: item.quantity,
+          })),
+        },
+      },
+      include: {
+        commandeItems: true,
+      },
+    });
+
+    //TODO: update product stock
+
+    return newCommand;
+  } catch (error) {
+    console.error(error);
+  }
+};

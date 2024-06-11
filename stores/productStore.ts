@@ -1,26 +1,38 @@
 // stores/productsStore.ts
 import { create } from "zustand";
-import { getRecentProducts } from "@/lib/Produit"; // Adjust the import path accordingly
+import { getRecentProducts, fetchSearchedProducts } from "@/lib/Produit"; // Adjust the import path accordingly
 
 import { Produit, Categorie, Stock } from "@prisma/client";
 
-interface ProductsStore {
+export interface ProductsStore {
   products: (Produit & {
     montantTotal?: number;
     categorie: Categorie;
     stock: Stock | null;
   })[];
   loading: boolean;
-  fetchProducts: () => Promise<void>;
+  fetchProducts: (limit: number) => Promise<void>;
+  searchProducts: (searchQuery: string) => Promise<void>;
 }
 
 export const useProductsStore = create<ProductsStore>((set) => ({
   products: [],
   loading: false,
-  fetchProducts: async () => {
+  fetchProducts: async (limit: number = 15) => {
     set({ loading: true });
     try {
-      const products = await getRecentProducts();
+      const products = await getRecentProducts(limit);
+      set({ products, loading: false });
+    } catch (error) {
+      console.error("Failed to fetch recent products", error);
+      set({ loading: false });
+    }
+  },
+
+  searchProducts: async (searchQuery: string) => {
+    set({ loading: true });
+    try {
+      const products = await fetchSearchedProducts(searchQuery);
       set({ products, loading: false });
     } catch (error) {
       console.error("Failed to fetch recent products", error);

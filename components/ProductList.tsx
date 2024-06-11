@@ -27,7 +27,7 @@ const ProductList = () => {
 
   const { onOpen, onSelect } = useProduitInfoState();
   useEffect(() => {
-    fetchProducts();
+    fetchProducts(15);
   }, [fetchProducts]);
 
   const handleRowClick = (produit_id: number) => {

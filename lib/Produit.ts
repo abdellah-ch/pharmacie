@@ -64,6 +64,23 @@ export async function getRecentProducts(limit: number = 15) {
   });
 }
 
+//search for products limit to five
+export async function fetchSearchedProducts(searchQuery: string) {
+  return await prisma.produit.findMany({
+    where: {
+      designation: {
+        contains: searchQuery,
+      },
+    },
+    include: {
+      categorie: true,
+      stock: true,
+    },
+    take: 5,
+  });
+}
+
+//
 //Obtenir Les categories
 
 export async function fetchCategories(
