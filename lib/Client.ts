@@ -25,13 +25,13 @@ export async function createClient(data: CreateClientInput) {
   }
 }
 
-export const getRecentClients = async () => {
+export const getRecentClients = async (limit: number = 5) => {
   try {
     const clients = await prisma.client.findMany({
       orderBy: {
         createdAt: "desc",
       },
-      take: 5,
+      take: limit,
     });
     return clients;
   } catch (error) {
@@ -78,34 +78,73 @@ export const InsertCommandInfo = async (
   items: CommandeItemInput[]
 ) => {
   try {
-    let total = 0;
+    return await prisma.$transaction(async (prisma) => {
+      let total = 0;
 
-    for (const item of items) {
-      total += item.monto;
-    }
-
-    //create
-    const newCommand = await prisma.commande.create({
-      data: {
-        client_id: clientId,
-        total,
-        status: "ENCOURS",
-        commandeItems: {
-          create: items.map((item) => ({
-            produit_id: item.product_id,
-            quantite: item.quantity,
-          })),
+      for (const item of items) {
+        total += item.monto;
+      }
+      //create
+      const newCommand = await prisma.commande.create({
+        data: {
+          client_id: clientId,
+          total,
+          status: "ENCOURS",
+          commandeItems: {
+            create: items.map((item) => ({
+              produit_id: item.product_id,
+              quantite: item.quantity,
+            })),
+          },
         },
-      },
-      include: {
-        commandeItems: true,
-      },
+        include: {
+          commandeItems: true,
+        },
+      });
+
+      //TODO: update product stock
+      for (const item of items) {
+        await prisma.stock.update({
+          where: { produit_id: item.product_id },
+          data: {
+            stock_total: { decrement: item.quantity },
+            stock_engage: { increment: item.quantity },
+          },
+        });
+      }
     });
 
-    //TODO: update product stock
-
-    return newCommand;
+    // return newCommand;
   } catch (error) {
     console.error(error);
   }
 };
+
+export async function getRecentCommands(limit: number) {
+  try {
+    const commands = await prisma.commande.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: limit,
+      include: {
+        client: true, // Include related client data
+        commandeItems: {
+          include: {
+            produit: true, // Include related product data
+          },
+        },
+      },
+    });
+    const summary = commands.map((command) => ({
+      date: command.createdAt.toDateString(),
+      nom: command.client.nom,
+      status: command.status.toString(),
+      total: command.total.toString(),
+    }));
+    return summary;
+  } catch (error) {
+    console.error("Error fetching recent commands: ", error);
+    throw new Error("Could not fetch recent commands");
+  }
+}

@@ -202,47 +202,43 @@ export async function obtenirAjustementsDeStockPourProduit(
   });
 }
 
-// // Exemple d'utilisation
-// export async function exempleUtilisation() {
-//   try {
-//     // Ajouter un nouveau produit
-//     const nouveauProduit = await ajouterProduit(
-//       "P001",
-//       "Description du produit",
-//       "Produit Exemple",
-//       "10.00",
-//       20.0,
-//       new Date("2025-12-31"),
-//       100,
-//       "http://exemple.com/photo.jpg",
-//       1,
-//       50
-//     );
-//     console.log("Nouveau produit ajouté:", nouveauProduit);
+export const getTotalStockInfo = async () => {
+  const stocks = await prisma.stock.findMany({
+    select: {
+      stock_disponible: true,
+      produit: {
+        select: {
+          prix_Achat: true,
+        },
+      },
+    },
+  });
 
-//     // Obtenir tous les produits
-//     const tousLesProduits = await obtenirTousLesProduits();
-//     console.log("Tous les produits:", tousLesProduits);
+  let totalValue = 0;
+  let totalQuantity = 0;
 
-//     // Mettre à jour un produit
-//     const produitMisAJour = await mettreAJourProduit(
-//       nouveauProduit.produit_id,
-//       { prix_Vente: 25.0 }
-//     );
-//     console.log("Produit mis à jour:", produitMisAJour);
+  stocks.forEach((stock) => {
+    const stockValue = stock.stock_disponible * stock.produit.prix_Achat;
+    totalValue += stockValue;
+    totalQuantity += stock.stock_disponible;
+  });
 
-//     // Obtenir un produit par son ID
-//     const produitParID = await obtenirProduitParID(nouveauProduit.produit_id);
-//     console.log("Produit par ID:", produitParID);
+  return { totalValue, totalQuantity };
+};
 
-//     // Supprimer un produit
-//     await supprimerProduit(nouveauProduit.produit_id);
-//     console.log("Produit supprimé avec succès.");
-//   } catch (error) {
-//     console.error("Une erreur est survenue:", error);
-//   } finally {
-//     await prisma.$disconnect();
-//   }
-// }
+export const getStockCounts = async () => {
+  const lowStockCount = await prisma.produit.count({
+    where: {
+      quantite: {
+        lt: prisma.produit.fields.Seuil_reapprovisionnement,
+      },
+    },
+  });
 
-// exempleUtilisation();
+  const totalProductCount = await prisma.produit.count();
+
+  return {
+    lowStockCount,
+    totalProductCount,
+  };
+};
