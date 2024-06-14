@@ -34,6 +34,7 @@ model Produit {
   stock          Stock?
   ajustementsDeStock       AjustementsDeStock[]
   commandeItems  CommandeItem[]
+  bonCommandeItems   BonCommandeItem[]
 
 }
 
@@ -122,4 +123,46 @@ model CommandeItem {
 
   commande        Commande @relation(fields: [commande_id], references: [commande_id])
   produit         Produit  @relation(fields: [produit_id], references: [produit_id])
+}
+
+enum BonCommandeStatus {
+  EMIS
+  RECU
+}
+
+model Fournisseur {
+  fournisseur_id Int       @id @default(autoincrement())
+  nom            String
+  email          String    @unique
+  nomSociete     String? 
+  telephone      String?
+  adresse        String?
+  codePostal     Int?
+  Region         String?
+  bonCommandes   BonCommande[]
+
+  createdAt      DateTime  @default(now())
+}
+
+model BonCommande {
+  bonCommande_id   Int                  @id @default(autoincrement())
+  fournisseur_id   Int
+  status           BonCommandeStatus    @default(EMIS)
+  total            Float
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  fournisseur      Fournisseur          @relation(fields: [fournisseur_id], references: [fournisseur_id])
+  bonCommandeItems BonCommandeItem[]
+}
+
+model BonCommandeItem {
+  bonCommandeItem_id Int     @id @default(autoincrement())
+  bonCommande_id     Int
+  produit_id         Int
+  quantite           Int
+  prixUnitaire       Float
+
+  bonCommande        BonCommande @relation(fields: [bonCommande_id], references: [bonCommande_id])
+  produit            Produit     @relation(fields: [produit_id], references: [produit_id])
 }

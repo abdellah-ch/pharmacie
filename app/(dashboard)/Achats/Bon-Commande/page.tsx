@@ -1,5 +1,11 @@
+import BonCommandeHeader from "@/components/NewBonCommande";
+
 const page = () => {
-  return <div>page</div>;
+  return (
+    <>
+      <BonCommandeHeader />
+    </>
+  );
 };
 
 export default page;
