@@ -2,10 +2,11 @@ import { create } from "zustand";
 
 import { Client, Commande } from "@prisma/client";
 import { getRecentClients, getRecentCommands } from "@/lib/Client";
-
+import { searchClients } from "@/lib/Client";
 type StateType = {
   clients: Client[];
   commandes: {
+    commandId: number;
     nom: string;
     total: string;
     status: string;
@@ -13,6 +14,7 @@ type StateType = {
   }[];
   loading: boolean;
   fetchClient: (limit: number) => Promise<void>;
+  searchClient: (query: string) => Promise<void>;
   fetchCommands: (limit: number) => Promise<void>;
 };
 
@@ -31,6 +33,11 @@ export const useClient = create<StateType>((set) => ({
       set({ loading: false });
     }
   },
+  searchClient: async (query: string) => {
+    set({ loading: true });
+    const clients = await searchClients(query);
+    set({ loading: false, clients });
+  },
   fetchCommands: async (limit) => {
     set({ loading: true });
     try {
@@ -42,4 +49,20 @@ export const useClient = create<StateType>((set) => ({
       set({ loading: false });
     }
   },
+}));
+
+type CommadeClientState = {
+  isOpen: boolean;
+  commandId: number;
+  onSelect: (commadeId: number) => void;
+  onOpen: () => void;
+  onClose: () => void;
+};
+
+export const useCommadeClientState = create<CommadeClientState>((set) => ({
+  isOpen: false,
+  commandId: 0,
+  onSelect: (commandId) => set({ commandId: commandId }),
+  onOpen: () => set({ isOpen: true }),
+  onClose: () => set({ isOpen: false }),
 }));

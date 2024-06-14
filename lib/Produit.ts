@@ -227,13 +227,16 @@ export const getTotalStockInfo = async () => {
 };
 
 export const getStockCounts = async () => {
-  const lowStockCount = await prisma.produit.count({
-    where: {
-      quantite: {
-        lt: prisma.produit.fields.Seuil_reapprovisionnement,
-      },
+  const products = await prisma.produit.findMany({
+    select: {
+      quantite: true,
+      Seuil_reapprovisionnement: true,
     },
   });
+
+  const lowStockCount = products.filter(
+    (product) => product.quantite < product.Seuil_reapprovisionnement
+  ).length;
 
   const totalProductCount = await prisma.produit.count();
 

@@ -3,7 +3,7 @@ import { getRecentProducts } from "@/lib/Produit";
 import { useRouter } from "next/navigation";
 
 import { useProductsStore, useProduitInfoState } from "@/stores/productStore";
-import { useClient } from "@/stores/clientStore";
+import { useClient, useCommadeClientState } from "@/stores/clientStore";
 
 import { useEffect, useState } from "react";
 import {
@@ -29,19 +29,23 @@ const CommandeList = () => {
   //   const [selectionBehavior, setSelectionBehavior] = useState("toggle");
   //   const router = useRouter();
 
-  const { onOpen, onSelect } = useProduitInfoState();
+  const { onOpen, onSelect } = useCommadeClientState();
   // alert(commade);
 
   useEffect(() => {
     fetchCommands(15);
   }, [fetchCommands]);
 
-  const handleRowClick = (produit_id: number) => {
+  const handleRowClick = (command_id: number) => {
+    // alert(command_id);
+
     // const selectedProduct = products.find(
     //   (product) => product.produit_id === produit_id
     // );
     // if (selectedProduct) {
-    //   onSelect(selectedProduct);
+
+    onSelect(command_id);
+    // onOpen();
     // }
   };
 
@@ -95,7 +99,7 @@ const CommandeList = () => {
         onRowAction={(key) => {
           // router.push(`/Inventaire/Produits/${key}`);
           handleRowClick(Number(key));
-          //   onOpen();
+          onOpen();
         }}
         onSelectionChange={(key) => {
           const selected = Array.from(key);
@@ -111,7 +115,7 @@ const CommandeList = () => {
         </TableHeader>
         <TableBody items={commandes}>
           {(item) => (
-            <TableRow key={item.total} className="cursor-pointer">
+            <TableRow key={item.commandId} className="cursor-pointer">
               {(columnKey) => (
                 <TableCell>
                   {columnKey === "total"

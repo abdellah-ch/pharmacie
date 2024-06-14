@@ -6,6 +6,7 @@ import {
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Sidebar from "@/components/Sidebar";
+import SearchComponent from "@/components/SearchComponent";
 
 const MainLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
@@ -26,9 +27,7 @@ const MainLayout = async ({ children }: { children: React.ReactNode }) => {
             className="w-[50%]"
           >
             <div className="flex flex-col">
-              <div className="bg-[#f7f7fe] h-[7vh] flex items-center ">
-                Search
-              </div>
+              <SearchComponent />
               {children}
             </div>
           </ResizablePanel>

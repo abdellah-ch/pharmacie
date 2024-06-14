@@ -137,6 +137,7 @@ export async function getRecentCommands(limit: number) {
       },
     });
     const summary = commands.map((command) => ({
+      commandId: command.commande_id,
       date: command.createdAt.toDateString(),
       nom: command.client.nom,
       status: command.status.toString(),
