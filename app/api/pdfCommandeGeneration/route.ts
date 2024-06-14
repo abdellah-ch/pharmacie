@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
 
   // Create a PDF document
   const pdfDoc = await PDFDocument.create();
-  const page = pdfDoc.addPage([700, 500]);
+  const page = pdfDoc.addPage([600, 500]);
   const { width, height } = page.getSize();
   const fontSize = 12;
   const margin = 50;

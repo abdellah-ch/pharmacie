@@ -2,9 +2,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FaCartShopping } from "react-icons/fa6";
-import { Document, Page, pdfjs } from "react-pdf";
-import "react-pdf/dist/esm/Page/AnnotationLayer.css";
-import "react-pdf/dist/esm/Page/TextLayer.css";
 import {
   Sheet,
   SheetClose,
@@ -17,25 +14,13 @@ import {
 } from "@/components/ui/sheet";
 import { useCommadeClientState } from "@/stores/clientStore";
 
-// pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-//   "pdfjs-dist/build/pdf.worker.min.mjs",
-//   import.meta.url
-// ).toString();
-// pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
-
-// pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
-
 const PdfViewer = (props: { id: number }) => {
   let url = `/api/pdfCommandeGeneration?commandeId=${props.id}`;
+
   return (
-    <Document
-      // file={{ data: pdfData }}
-      file={url}
-      onLoadSuccess={() => console.log("PDF loaded successfully")}
-      className="border-2 shadow-lg w-full h-full"
-    >
-      <Page pageNumber={1} />
-    </Document>
+    <div>
+      <iframe src={url} width={800} height={500}></iframe>
+    </div>
   );
 };
 const CommandeInfoSheet = () => {
@@ -73,11 +58,8 @@ const CommandeInfoSheet = () => {
             </div>
           </SheetDescription>
         </SheetHeader>
-        <div className="flex flex-col ">
-          {/* <a href="/api/pdfCommandeGeneration?commandeId=9 " target="__blank">
-            Dowload
-          </a> */}
-          {/* <PdfViewer id={commandId} /> */}
+        <div className="mt-8 flex flex-col justify-center items-center w-full">
+          <PdfViewer id={commandId} />
         </div>
       </SheetContent>
     </Sheet>
