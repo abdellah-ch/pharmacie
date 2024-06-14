@@ -21,7 +21,7 @@ import { useCommadeClientState } from "@/stores/clientStore";
 //   "pdfjs-dist/build/pdf.worker.min.mjs",
 //   import.meta.url
 // ).toString();
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+// pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
@@ -74,10 +74,10 @@ const CommandeInfoSheet = () => {
           </SheetDescription>
         </SheetHeader>
         <div className="flex flex-col ">
-          <a href="/api/pdfCommandeGeneration?commandeId=9 " target="__blank">
+          {/* <a href="/api/pdfCommandeGeneration?commandeId=9 " target="__blank">
             Dowload
-          </a>
-          <PdfViewer id={commandId} />
+          </a> */}
+          {/* <PdfViewer id={commandId} /> */}
         </div>
       </SheetContent>
     </Sheet>
