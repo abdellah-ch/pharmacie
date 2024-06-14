@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
   const regularFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
   // Helper function to draw text
-  const drawText = (text, x, y, options = {}) => {
+  const drawText = (text: any, x: any, y: any, options = {}) => {
     page.drawText(text, {
       x,
       y,
