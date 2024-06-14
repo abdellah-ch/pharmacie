@@ -3,10 +3,8 @@ import { Input } from "@/components/ui/input";
 import { useClient } from "@/stores/clientStore";
 import { useProductsStore } from "@/stores/productStore";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 const SearchComponent = () => {
   const pathname = usePathname();
-  const [query, setQuery] = useState<string>("");
   const { searchProducts } = useProductsStore();
   const { searchClient, fetchClient } = useClient();
   console.log(pathname);
