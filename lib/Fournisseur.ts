@@ -139,3 +139,52 @@ export async function getRecentBonCommandes(limit: number) {
     throw new Error("Could not fetch recent bon commandes");
   }
 }
+
+export const getBonCommandesByFournisseurAndDateRange = async (
+  fournisseurName: string,
+  startDate: Date,
+  endDate: Date
+) => {
+  try {
+    const bonCommandes = await prisma.bonCommande.findMany({
+      where: {
+        AND: [
+          {
+            createdAt: {
+              gte: startDate,
+              lte: endDate,
+            },
+          },
+          {
+            fournisseur: {
+              nom: {
+                contains: fournisseurName,
+              },
+            },
+          },
+        ],
+      },
+      include: {
+        fournisseur: true, // Include related fournisseur data
+        bonCommandeItems: {
+          include: {
+            produit: true, // Include related product data
+          },
+        },
+      },
+    });
+
+    const summary = bonCommandes.map((bonCommande) => ({
+      bonCommandId: bonCommande.bonCommande_id,
+      date: bonCommande.createdAt.toISOString().split("T")[0],
+      nom: bonCommande.fournisseur.nom,
+      status: bonCommande.status.toString(),
+      total: bonCommande.total.toString(),
+    }));
+
+    return summary;
+  } catch (error) {
+    console.error("Error fetching bon commandes: ", error);
+    throw new Error("Could not fetch bon commandes");
+  }
+};

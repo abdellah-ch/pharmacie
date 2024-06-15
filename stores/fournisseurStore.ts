@@ -1,4 +1,5 @@
 import {
+  getBonCommandesByFournisseurAndDateRange,
   getRecentBonCommandes,
   obtenirFournisseurs,
   searchFournisseurs,
@@ -19,6 +20,11 @@ type StateType = {
   fetchFournisseur: (limit: number) => Promise<void>;
   searchFournisseur: (query: string) => Promise<void>;
   fetchBonCommands: (limit: number) => Promise<void>;
+  fetchBonCommandesByFournisseurAndDate: (
+    fournisseurName: string,
+    startDate: Date,
+    endDate: Date
+  ) => Promise<void>;
 };
 
 export const useFournisseur = create<StateType>((set) => ({
@@ -46,6 +52,24 @@ export const useFournisseur = create<StateType>((set) => ({
     try {
       const bonCommandes = await getRecentBonCommandes(limit);
 
+      set({ loading: false, bonCommandes });
+    } catch (error) {
+      console.error(error);
+      set({ loading: false });
+    }
+  },
+  fetchBonCommandesByFournisseurAndDate: async (
+    fournisseurName: string,
+    startDate: Date,
+    endDate: Date
+  ) => {
+    set({ loading: true });
+    try {
+      const bonCommandes = await getBonCommandesByFournisseurAndDateRange(
+        fournisseurName,
+        startDate,
+        endDate
+      );
       set({ loading: false, bonCommandes });
     } catch (error) {
       console.error(error);

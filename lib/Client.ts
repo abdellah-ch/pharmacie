@@ -151,3 +151,52 @@ export async function getRecentCommands(limit: number) {
     throw new Error("Could not fetch recent commands");
   }
 }
+
+export const getCommandsByClientAndDateRange = async (
+  clientName: string,
+  startDate: Date,
+  endDate: Date
+) => {
+  try {
+    const commands = await prisma.commande.findMany({
+      where: {
+        AND: [
+          {
+            createdAt: {
+              gte: startDate,
+              lte: endDate,
+            },
+          },
+          {
+            client: {
+              nom: {
+                contains: clientName,
+              },
+            },
+          },
+        ],
+      },
+      include: {
+        client: true, // Include related client data
+        commandeItems: {
+          include: {
+            produit: true, // Include related product data
+          },
+        },
+      },
+    });
+
+    const summary = commands.map((command) => ({
+      commandId: command.commande_id,
+      date: command.createdAt.toISOString().split("T")[0],
+      nom: command.client.nom,
+      status: command.status.toString(),
+      total: command.total.toString(),
+    }));
+
+    return summary;
+  } catch (error) {
+    console.error("Error fetching commands: ", error);
+    throw new Error("Could not fetch commands");
+  }
+};

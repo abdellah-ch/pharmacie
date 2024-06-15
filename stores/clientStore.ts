@@ -1,7 +1,11 @@
 import { create } from "zustand";
 
 import { Client, Commande } from "@prisma/client";
-import { getRecentClients, getRecentCommands } from "@/lib/Client";
+import {
+  getCommandsByClientAndDateRange,
+  getRecentClients,
+  getRecentCommands,
+} from "@/lib/Client";
 import { searchClients } from "@/lib/Client";
 type StateType = {
   clients: Client[];
@@ -16,6 +20,11 @@ type StateType = {
   fetchClient: (limit: number) => Promise<void>;
   searchClient: (query: string) => Promise<void>;
   fetchCommands: (limit: number) => Promise<void>;
+  fetchCommandsByClientAndDate: (
+    clientName: string,
+    startDate: Date,
+    endDate: Date
+  ) => Promise<void>;
 };
 
 export const useClient = create<StateType>((set) => ({
@@ -43,6 +52,24 @@ export const useClient = create<StateType>((set) => ({
     try {
       const commandes = await getRecentCommands(limit);
 
+      set({ loading: false, commandes });
+    } catch (error) {
+      console.error(error);
+      set({ loading: false });
+    }
+  },
+  fetchCommandsByClientAndDate: async (
+    clientName: string,
+    startDate: Date,
+    endDate: Date
+  ) => {
+    set({ loading: true });
+    try {
+      const commandes = await getCommandsByClientAndDateRange(
+        clientName,
+        startDate,
+        endDate
+      );
       set({ loading: false, commandes });
     } catch (error) {
       console.error(error);

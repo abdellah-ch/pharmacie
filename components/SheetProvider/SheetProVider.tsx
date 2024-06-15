@@ -1,4 +1,5 @@
 import CommandeInfoSheet from "../CommandeInfoSheet";
+import DateFilterCommandesModel from "../DateFilterCommandesModel";
 import ProduitInfoSheet from "../ProduitInfoSheet";
 
 const SheetProvider = () => {
@@ -6,6 +7,8 @@ const SheetProvider = () => {
     <>
       <ProduitInfoSheet />
       <CommandeInfoSheet />
+
+      <DateFilterCommandesModel />
     </>
   );
 };
