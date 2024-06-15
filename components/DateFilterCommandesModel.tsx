@@ -59,7 +59,7 @@ function DateFilterCommandesModel() {
         <div className="grid gap-4 py-4">
           <div className="flex items-center gap-4">
             <Label htmlFor="name" className="text-left w-[30%]">
-              client
+              client/fournisseur
             </Label>
             <Input
               id="name"
