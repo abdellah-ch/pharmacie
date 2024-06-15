@@ -75,6 +75,7 @@ interface CommandeItemInput {
 }
 export const InsertCommandInfo = async (
   clientId: number,
+  date: Date | undefined,
   items: CommandeItemInput[]
 ) => {
   try {
@@ -90,6 +91,7 @@ export const InsertCommandInfo = async (
           client_id: clientId,
           total,
           status: "ENCOURS",
+          createdAt: date,
           commandeItems: {
             create: items.map((item) => ({
               produit_id: item.product_id,
@@ -138,7 +140,7 @@ export async function getRecentCommands(limit: number) {
     });
     const summary = commands.map((command) => ({
       commandId: command.commande_id,
-      date: command.createdAt.toDateString(),
+      date: command.createdAt.toISOString().split("T")[0],
       nom: command.client.nom,
       status: command.status.toString(),
       total: command.total.toString(),

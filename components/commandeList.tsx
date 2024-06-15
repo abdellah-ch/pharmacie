@@ -60,7 +60,7 @@ const CommandeList = () => {
     },
     {
       key: "nom",
-      label: "nom",
+      label: "nom du Client",
     },
     {
       key: "status",

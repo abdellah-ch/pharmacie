@@ -28,7 +28,7 @@ const BonCommandeHeader = () => {
         </p>
       </div>
       <div className="flex items-center gap-4">
-        <Link href="/Vente/Commande-Client/new">
+        <Link href="/Achats/Bon-Commande/new">
           <Button className="bg-[#408dfb] hover:bg-[#408dfb]">
             <Plus /> Nouveau
           </Button>
