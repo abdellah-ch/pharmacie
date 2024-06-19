@@ -28,7 +28,7 @@ model Produit {
   Seuil_reapprovisionnement Int 
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime? @updatedAt  @default(now())
 
   categorie      Categorie @relation(fields: [categorie_id], references: [categorie_id])
   stock          Stock?
@@ -97,12 +97,33 @@ model Commande {
   client_id   Int
   status      CommandeStatus @default(ENCOURS)
   total       Float
-  createdAt   DateTime @db.Date @default(now())
-  updatedAt   DateTime  @updatedAt
+  facturee    Boolean @default(false) 
+  payee       Boolean @default(false)
+  createdAt   DateTime?  @default(now()) 
+  updatedAt   DateTime  @updatedAt @default(now())
 
   client      Client    @relation(fields: [client_id], references: [client_id])
   commandeItems  CommandeItem[]
   colis       Colis[]
+  factures    Facture[]
+  paiments    Paiement[]
+}
+
+model Facture {
+  facture_id Int @id @default(autoincrement())
+  command_id Int
+  montant    Float
+  date_emission DateTime   @default(now())
+  commande Commande @relation(fields: [command_id],references: [commande_id])
+}
+
+model Paiement{
+  paiement_id Int @id @default(autoincrement())
+ command_id Int 
+ montant Float
+ date_paiment DateTime  @default(now())
+
+commande Commande @relation(fields: [command_id],references: [commande_id])
 }
 
 model Colis {
@@ -110,7 +131,7 @@ model Colis {
   commande_id Int
   status      ColisStatus @default(EMBALLE)
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  updatedAt   DateTime  @updatedAt @default(now())
 
   commande    Commande  @relation(fields: [commande_id], references: [commande_id])
 }
@@ -149,8 +170,8 @@ model BonCommande {
   fournisseur_id   Int
   status           BonCommandeStatus    @default(EMIS)
   total            Float
-  createdAt        DateTime    @db.Date         @default(now())
-  updatedAt        DateTime             @updatedAt
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime             @updatedAt @default(now())
 
   fournisseur      Fournisseur          @relation(fields: [fournisseur_id], references: [fournisseur_id])
   bonCommandeItems BonCommandeItem[]

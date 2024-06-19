@@ -1,5 +1,11 @@
+import AjustementHeader from "@/components/AjustementHeader";
+
 function page() {
-  return <div>page</div>;
+  return (
+    <div>
+      <AjustementHeader />
+    </div>
+  );
 }
 
 export default page;

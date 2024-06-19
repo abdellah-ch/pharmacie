@@ -47,14 +47,7 @@ const CommandeInfoSheet = () => {
                   </p>
                 </div>
               </div>
-              <div className="flex space-x-2">
-                <Button className="bg-blue-500 text-white px-4 py-2 rounded-md">
-                  Convertir <span className="ml-1">▼</span>
-                </Button>
-                <Button className="hover:text-white bg-zinc-100 text-zinc-700 px-4 py-2 rounded-md">
-                  Créer le colis
-                </Button>
-              </div>
+              <div className="flex space-x-2"></div>
             </div>
           </SheetDescription>
         </SheetHeader>
