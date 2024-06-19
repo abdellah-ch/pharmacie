@@ -99,7 +99,7 @@ model Commande {
   total       Float
   facturee    Boolean @default(false) 
   payee       Boolean @default(false)
-  createdAt   DateTime?  @default(now()) 
+  createdAt   DateTime  @default(now()) 
   updatedAt   DateTime  @updatedAt @default(now())
 
   client      Client    @relation(fields: [client_id], references: [client_id])
