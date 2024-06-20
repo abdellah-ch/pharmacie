@@ -12,31 +12,51 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Missing commandeId" }, { status: 400 });
   }
 
-  const pdfPath = join(process.cwd(), `public/commande-${commandeId}.pdf`);
+  const pdfPath = join(
+    process.cwd(),
+    `public/ordre-livraison-${commandeId}.pdf`
+  );
 
   if (existsSync(pdfPath)) {
     return NextResponse.json({
-      pdfUrl: `/commande-${commandeId}.pdf`,
+      pdfUrl: `/ordre-livraison-${commandeId}.pdf`,
     });
   }
 
-  // Fetch the commande data
-  const commande = await prisma.commande.findUnique({
-    where: { commande_id: parseInt(commandeId) },
+  // Fetch the existing Colis data with status LIVREE
+  const colis = await prisma.colis.findFirst({
+    where: {
+      commande_id: parseInt(commandeId),
+      status: "LIVREE",
+    },
     include: {
-      client: true,
-      commandeItems: {
+      commande: {
         include: {
-          produit: true,
+          client: true,
+          commandeItems: {
+            include: {
+              produit: true,
+            },
+          },
         },
       },
     },
   });
 
-  if (!commande) {
-    return NextResponse.json({ error: "Commande not found" }, { status: 404 });
+  if (!colis) {
+    return NextResponse.json(
+      { error: "Colis with status LIVREE not found" },
+      { status: 404 }
+    );
   }
 
+  // If colis exists, generate the Ordre de Livraison PDF
+  await generateOrdreDeLivraisonPdf(colis, pdfPath);
+  return NextResponse.json({ pdfUrl: `/ordre-livraison-${commandeId}.pdf` });
+}
+
+// Function to generate Ordre de Livraison PDF
+async function generateOrdreDeLivraisonPdf(colis: any, pdfPath: any) {
   // Create a PDF document
   const pdfDoc = await PDFDocument.create();
   const page = pdfDoc.addPage([600, 700]);
@@ -67,14 +87,14 @@ export async function GET(req: NextRequest) {
   };
 
   // Header
-  page.drawText("COMMANDE CLIENT", {
+  page.drawText("ORDRE DE LIVRAISON", {
     x: margin,
     y: height - margin,
     size: fontSize + 4,
     font: boldFont,
     color: rgb(0, 0, 0),
   });
-  page.drawText(`N° de commande client ${commande.commande_id}`, {
+  page.drawText(`N° de livraison ${colis.colis_id}`, {
     x: margin,
     y: height - margin - lineHeight,
     size: fontSize + 4,
@@ -85,26 +105,26 @@ export async function GET(req: NextRequest) {
   // Client Information
   const clientY = height - margin - 3 * lineHeight;
   drawCenteredText(
-    `Date de la commande: ${commande.createdAt.toLocaleDateString()}`,
+    `Date de la livraison: ${colis.createdAt.toLocaleDateString()}`,
     margin,
     clientY,
     rowHeight
   );
 
   drawCenteredText(
-    `Facturer à: ${commande.client.nom}`,
+    `Livrer à: ${colis.commande.client.nom}`,
     margin,
     clientY - 2 * lineHeight,
     rowHeight
   );
   drawCenteredText(
-    `${commande.client.adresse}`,
+    `${colis.commande.client.adresse}`,
     margin,
     clientY - 3 * lineHeight,
     rowHeight
   );
   drawCenteredText(
-    `${commande.client.email}`,
+    `${colis.commande.client.email}`,
     margin,
     clientY - 4 * lineHeight,
     rowHeight
@@ -135,7 +155,7 @@ export async function GET(req: NextRequest) {
 
   // Order Items
   let currentItemY = tableHeaderY - rowHeight;
-  commande.commandeItems.forEach((item, index) => {
+  colis.commande.commandeItems.forEach((item: any, index: any) => {
     page.drawRectangle({
       x: margin - 5,
       y: currentItemY - rowHeight + 5,
@@ -171,30 +191,9 @@ export async function GET(req: NextRequest) {
     currentItemY -= rowHeight;
   });
 
-  // Order Summary
-  const summaryY = currentItemY - 2 * rowHeight;
-  drawCenteredText(
-    `Sous-total: MAD ${commande.total.toFixed(2)}`,
-    width - 3 * margin,
-    summaryY,
-    rowHeight
-  );
-  drawCenteredText(
-    `Total: MAD ${commande.total.toFixed(2)}`,
-    width - 3 * margin,
-    summaryY - rowHeight,
-    rowHeight,
-    { font: boldFont }
-  );
-
   // Serialize the PDFDocument to bytes (a Uint8Array)
   const pdfBytes = await pdfDoc.save();
 
   // Save PDF to a file
   writeFileSync(pdfPath, pdfBytes);
-
-  // Return URL to the PDF file
-  return NextResponse.json({
-    pdfUrl: `/commande-${commandeId}.pdf`,
-  });
 }

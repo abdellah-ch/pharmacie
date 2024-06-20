@@ -12,11 +12,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Missing commandeId" }, { status: 400 });
   }
 
-  const pdfPath = join(process.cwd(), `public/commande-${commandeId}.pdf`);
+  const pdfPath = join(process.cwd(), `public/facture-${commandeId}.pdf`);
 
   if (existsSync(pdfPath)) {
     return NextResponse.json({
-      pdfUrl: `/commande-${commandeId}.pdf`,
+      pdfUrl: `/facture-${commandeId}.pdf`,
     });
   }
 
@@ -67,7 +67,7 @@ export async function GET(req: NextRequest) {
   };
 
   // Header
-  page.drawText("COMMANDE CLIENT", {
+  page.drawText("FACTURE", {
     x: margin,
     y: height - margin,
     size: fontSize + 4,
@@ -85,7 +85,7 @@ export async function GET(req: NextRequest) {
   // Client Information
   const clientY = height - margin - 3 * lineHeight;
   drawCenteredText(
-    `Date de la commande: ${commande.createdAt.toLocaleDateString()}`,
+    `Date de la facture: ${commande.createdAt.toLocaleDateString()}`,
     margin,
     clientY,
     rowHeight
@@ -195,6 +195,6 @@ export async function GET(req: NextRequest) {
 
   // Return URL to the PDF file
   return NextResponse.json({
-    pdfUrl: `/commande-${commandeId}.pdf`,
+    pdfUrl: `/facture-${commandeId}.pdf`,
   });
 }

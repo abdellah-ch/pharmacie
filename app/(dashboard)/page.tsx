@@ -1,14 +1,64 @@
 "use client";
 import { getStockCounts, getTotalStockInfo } from "@/lib/Produit";
 import { useEffect, useState } from "react";
+import { Bar } from "react-chartjs-2";
 
+import "chart.js/auto";
+
+interface RevenueData {
+  monthlyRevenue: number[];
+}
 export default function Home() {
   const [qte, setQte] = useState<number>();
-
+  const [year, setYear] = useState<number>(new Date().getFullYear());
+  const [data, setData] = useState<any>({ labels: [], datasets: [] });
   const [monto, setMonto] = useState<number>();
   const [alert, setAlert] = useState<number>();
 
   const [productsCount, setProductsCount] = useState<number>();
+
+  const fetchRevenueData = async (selectedYear: number) => {
+    try {
+      const response = await fetch(`/api/CAmentiel?year=${selectedYear}`);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const responseData: RevenueData = await response.json();
+      const revenueData = responseData.monthlyRevenue;
+
+      setData({
+        labels: [
+          "Janvier",
+          "Février",
+          "Mars",
+          "Avril",
+          "Mai",
+          "Juin",
+          "Juillet",
+          "Août",
+          "Septembre",
+          "Octobre",
+          "Novembre",
+          "Décembre",
+        ],
+        datasets: [
+          {
+            label: `CA Mensuel pour ${selectedYear}`,
+            data: revenueData,
+            backgroundColor: "rgba(75, 192, 192, 0.6)",
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 1,
+          },
+        ],
+      });
+    } catch (error) {
+      console.error(
+        "Erreur lors de la récupération des données de revenu:",
+        error
+      );
+    }
+  };
+
   useEffect(() => {
     getTotalStockInfo().then((res) => {
       setQte(res.totalQuantity);
@@ -19,10 +69,12 @@ export default function Home() {
       setAlert(res.lowStockCount);
       setProductsCount(res.totalProductCount);
     });
-  }, []);
+
+    fetchRevenueData(year);
+  }, [year]);
 
   return (
-    <div className="flex flex-col p-6">
+    <div className="flex flex-col p-6 overflow-y-scroll h-[90vh]">
       {/* split */}
       <div className="flex gap-5">
         <div className="w-[40%] lg:w-[30%] bg-white dark:bg-zinc-800 rounded-lg shadow-md">
@@ -78,6 +130,10 @@ export default function Home() {
         </div>
       </div>
       {/* split */}
+      <div className="w-[50%] mt-7">
+        {/* CA mensuel chart  */}
+        <Bar data={data} />
+      </div>
     </div>
   );
 }

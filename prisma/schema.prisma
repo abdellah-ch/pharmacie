@@ -74,7 +74,6 @@ enum CommandeStatus {
 
 enum ColisStatus {
   EMBALLE
-  EXPEDIE
   LIVREE
 }
 
@@ -119,9 +118,9 @@ model Facture {
 
 model Paiement{
   paiement_id Int @id @default(autoincrement())
- command_id Int 
- montant Float
- date_paiment DateTime  @default(now())
+  command_id Int 
+  montant Float
+  date_paiment DateTime  @default(now())
 
 commande Commande @relation(fields: [command_id],references: [commande_id])
 }
