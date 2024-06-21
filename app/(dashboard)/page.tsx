@@ -9,11 +9,11 @@ interface RevenueData {
   monthlyRevenue: number[];
 }
 export default function Home() {
-  const [qte, setQte] = useState<number>();
+  const [qte, setQte] = useState<number | undefined>(undefined);
   const [year, setYear] = useState<number>(new Date().getFullYear());
-  const [data, setData] = useState<any>({ labels: [], datasets: [] });
-  const [monto, setMonto] = useState<number>();
-  const [alert, setAlert] = useState<number>();
+  const [data, setData] = useState<any | undefined>(undefined);
+  const [monto, setMonto] = useState<number | undefined>(undefined);
+  const [alert, setAlert] = useState<number | undefined>(undefined);
 
   const [productsCount, setProductsCount] = useState<number>();
 
@@ -73,6 +73,9 @@ export default function Home() {
     fetchRevenueData(year);
   }, [year]);
 
+  if (!qte || !monto || !alert || !productsCount) {
+    return <div>Chargement des données...</div>;
+  }
   return (
     <div className="flex flex-col p-6 overflow-y-scroll h-[90vh]">
       {/* split */}
