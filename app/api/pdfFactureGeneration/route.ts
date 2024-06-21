@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Missing commandeId" }, { status: 400 });
   }
 
-  const pdfPath = join(process.cwd(), `public/facture-${commandeId}.pdf`);
+  const pdfPath = join(process.cwd(), `facture-${commandeId}.pdf`);
 
   if (existsSync(pdfPath)) {
     return NextResponse.json({
