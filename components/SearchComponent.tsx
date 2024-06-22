@@ -1,12 +1,14 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { useClient } from "@/stores/clientStore";
+import { useFournisseur } from "@/stores/fournisseurStore";
 import { useProductsStore } from "@/stores/productStore";
 import { usePathname } from "next/navigation";
 const SearchComponent = () => {
   const pathname = usePathname();
   const { searchProducts } = useProductsStore();
   const { searchClient, fetchClient } = useClient();
+  const { searchFournisseur } = useFournisseur();
   console.log(pathname);
 
   const handleInputChange = (e: any) => {
@@ -18,6 +20,8 @@ const SearchComponent = () => {
       searchProducts(query);
     } else if (pathname.includes("Clients")) {
       searchClient(query);
+    } else if (pathname.includes("Fournisseurs")) {
+      searchFournisseur(query);
     }
   };
   return (
