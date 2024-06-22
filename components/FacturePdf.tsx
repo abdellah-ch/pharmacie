@@ -6,7 +6,7 @@ const FacturePdf = (props: { commandId: number }) => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `/api/pdfColisGeneration?commandeId=${props.commandId}`,
+        `/api/pdfFactureGeneration?commandeId=${props.commandId}`,
         {
           method: "GET",
         }
