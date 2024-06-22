@@ -188,3 +188,73 @@ export const getBonCommandesByFournisseurAndDateRange = async (
     throw new Error("Could not fetch bon commandes");
   }
 };
+
+
+export async function getBonCommandeStatus(bonCommandeId: number): Promise<string | null> {
+  try {
+    const bonCommande = await prisma.bonCommande.findUnique({
+      where: { bonCommande_id: bonCommandeId },
+      select: { status: true },
+    });
+
+    if (!bonCommande) {
+      console.error("BonCommande not found");
+      return null;
+    }
+
+    return bonCommande.status;
+  } catch (error) {
+    console.error("Error fetching BonCommande status:", error);
+    return null;
+  }
+}
+
+export async function updateBonCommandeStatusToRecu(bonCommandeId: number): Promise<void> {
+  try {
+    // Start a transaction
+    await prisma.$transaction(async (prisma) => {
+      // Update BonCommande status to RECU
+      const updatedBonCommande = await prisma.bonCommande.update({
+        where: { bonCommande_id: bonCommandeId },
+        data: { status: 'RECU' },
+        include: {
+          bonCommandeItems: true
+        }
+      });
+
+      // Iterate over each BonCommandeItem to update the product quantities and stock
+      for (const item of updatedBonCommande.bonCommandeItems) {
+        const produitId = item.produit_id;
+        const quantite = item.quantite;
+
+        // Update the Produit model
+        await prisma.produit.update({
+          where: { produit_id: produitId },
+          data: {
+            quantite: {
+              increment: quantite
+            }
+          }
+        });
+
+        // Update the Stock model
+        await prisma.stock.update({
+          where: { produit_id: produitId },
+          data: {
+            stock_disponible: {
+              increment: quantite
+            },
+            stock_total: {
+              increment: quantite
+            }
+          }
+        });
+      }
+    });
+
+    console.log(`BonCommande ${bonCommandeId} status updated to RECU and stock quantities updated successfully.`);
+  } catch (error) {
+    console.error("Error updating BonCommande status and stock quantities:", error);
+    throw error;
+  }
+}

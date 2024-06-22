@@ -61,19 +61,23 @@ export default function Home() {
 
   useEffect(() => {
     getTotalStockInfo().then((res) => {
+      console.log(res);
+
       setQte(res.totalQuantity);
       setMonto(res.totalValue);
     });
 
     getStockCounts().then((res) => {
+      console.log(res);
+
       setAlert(res.lowStockCount);
       setProductsCount(res.totalProductCount);
     });
 
     fetchRevenueData(year);
-  }, [year]);
+  }, []);
 
-  if (!qte || !monto || !alert || !productsCount) {
+  if (!data || !qte || !monto || !productsCount) {
     return <div>Chargement des données...</div>;
   }
   return (
