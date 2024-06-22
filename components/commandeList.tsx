@@ -45,7 +45,7 @@ const CommandeList = () => {
     // if (selectedProduct) {
 
     onSelect(command_id);
-    // onOpen();
+    onOpen();
     // }
   };
 
@@ -103,7 +103,8 @@ const CommandeList = () => {
         }}
         onSelectionChange={(key) => {
           const selected = Array.from(key);
-          // onOpen();
+          onSelect(Number(selected[0]));
+          onOpen();
           // router.push(`/Inventaire/Produits/${selected[0]}`);
           // rt(selected[0]);
         }}

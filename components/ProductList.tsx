@@ -36,6 +36,7 @@ const ProductList = () => {
     );
     if (selectedProduct) {
       onSelect(selectedProduct);
+      onOpen();
     }
   };
 
@@ -97,7 +98,9 @@ const ProductList = () => {
         }}
         onSelectionChange={(key) => {
           const selected = Array.from(key);
-          // onOpen();
+
+          handleRowClick(Number(selected[0]));
+          onOpen();
           // router.push(`/Inventaire/Produits/${selected[0]}`);
           // rt(selected[0]);
         }}

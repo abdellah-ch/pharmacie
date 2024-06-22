@@ -77,3 +77,21 @@ export const useFournisseur = create<StateType>((set) => ({
     }
   },
 }));
+
+
+
+type BonCommandeSheetState = {
+  isOpen: boolean;
+  BonCommandId: number;
+  onSelect: (BonCommandId: number) => void;
+  onOpen: () => void;
+  onClose: () => void;
+};
+
+export const useBonCommandeSheetState = create<BonCommandeSheetState>((set) => ({
+  isOpen: false,
+  BonCommandId: 0,
+  onSelect: (BonCommandId) => set({ BonCommandId: BonCommandId }),
+  onOpen: () => set({ isOpen: true }),
+  onClose: () => set({ isOpen: false }),
+}));

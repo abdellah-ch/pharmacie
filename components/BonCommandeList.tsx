@@ -17,11 +17,17 @@ import {
   Radio,
   RadioGroup,
 } from "@nextui-org/react";
-import { useFournisseur } from "@/stores/fournisseurStore";
+import {
+  useBonCommandeSheetState,
+  useFournisseur,
+} from "@/stores/fournisseurStore";
 
 const BonCommandeList = () => {
   //   const { products, fetchProducts, loading } = useProductsStore();
   const { bonCommandes, loading, fetchBonCommands } = useFournisseur();
+
+  const { onOpen, onSelect } = useBonCommandeSheetState();
+
   console.log(bonCommandes);
 
   //   products.forEach((product) => {
@@ -30,7 +36,6 @@ const BonCommandeList = () => {
   //   const [selectionBehavior, setSelectionBehavior] = useState("toggle");
   //   const router = useRouter();
 
-  const { onOpen, onSelect } = useCommadeClientState();
   // alert(commade);
 
   useEffect(() => {
@@ -46,7 +51,7 @@ const BonCommandeList = () => {
     // if (selectedProduct) {
 
     onSelect(command_id);
-    // onOpen();
+    onOpen();
     // }
   };
 
@@ -104,7 +109,8 @@ const BonCommandeList = () => {
         }}
         onSelectionChange={(key) => {
           const selected = Array.from(key);
-          // onOpen();
+          onSelect(Number(selected[0]));
+          onOpen();
           // router.push(`/Inventaire/Produits/${selected[0]}`);
           // rt(selected[0]);
         }}
