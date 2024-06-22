@@ -75,16 +75,16 @@ const Sidebar = () => {
               variant:
                 pathname === "/Inventaire/Produits" ? "default" : "ghost",
             },
-            {
-              title: "Ajustement de Stock",
-              path: "/Inventaire/Ajustement-Stock",
-              label: "",
-              icon: Pen, // Placeholder for Lucid icon
-              variant:
-                pathname === "/Inventaire/Ajustement-Stock"
-                  ? "default"
-                  : "ghost",
-            },
+            // {
+            //   title: "Ajustement de Stock",
+            //   path: "/Inventaire/Ajustement-Stock",
+            //   label: "",
+            //   icon: Pen, // Placeholder for Lucid icon
+            //   variant:
+            //     pathname === "/Inventaire/Ajustement-Stock"
+            //       ? "default"
+            //       : "ghost",
+            // },
           ]}
         />
         <Separator />

@@ -120,14 +120,31 @@ export async function mettreAJourStockProduit(
 }
 
 // Supprimer un produit
-export async function supprimerProduitAvecStock(
-  produit_id: number
-): Promise<Produit | null> {
-  return await prisma.produit.delete({
-    where: { produit_id },
-    include: {
-      stock: true,
-    },
+export async function supprimerProduitAvecStock(produit_id: number): Promise<Produit | null> {
+  // Start a transaction to ensure all deletions are performed atomically
+  return await prisma.$transaction(async (prisma) => {
+    // Delete related stock records
+    await prisma.stock.deleteMany({
+      where: { produit_id },
+    });
+
+    // Delete related ajustementsDeStock records
+    await prisma.ajustementsDeStock.deleteMany({
+      where: { produit_id },
+    });
+
+    await prisma.bonCommandeItem.deleteMany({
+      where: { produit_id },
+    });
+    // Delete related commandeItems records
+    await prisma.commandeItem.deleteMany({
+      where: { produit_id },
+    });
+
+    // Finally, delete the produit record
+    return await prisma.produit.delete({
+      where: { produit_id },
+    });
   });
 }
 

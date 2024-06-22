@@ -9,62 +9,59 @@ generator client {
 }
 
 datasource db {
-   provider = "mysql"
-    url      = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
-
 model Produit {
-  produit_id     Int      @unique @id @default(autoincrement())
-  code_produit   String   @unique
-  description    String
-  designation    String
-  prix_Achat     Int 
-  prix_Vente     Int 
-  date_expiration DateTime? @db.Date   
-  quantite       Int
-  photo          String?
-  categorie_id   Int 
-  Seuil_reapprovisionnement Int 
+  produit_id                Int       @id @unique @default(autoincrement())
+  code_produit              String    @unique
+  description               String
+  designation               String
+  prix_Achat                Int
+  prix_Vente                Int
+  date_expiration           DateTime? @db.Date
+  quantite                  Int
+  photo                     String?
+  categorie_id              Int
+  Seuil_reapprovisionnement Int
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime? @updatedAt  @default(now())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @default(now()) @updatedAt
 
-  categorie      Categorie @relation(fields: [categorie_id], references: [categorie_id])
-  stock          Stock?
-  ajustementsDeStock       AjustementsDeStock[]
-  commandeItems  CommandeItem[]
+  categorie          Categorie            @relation(fields: [categorie_id], references: [categorie_id])
+  stock              Stock?
+  ajustementsDeStock AjustementsDeStock[]
+  commandeItems      CommandeItem[]
   bonCommandeItems   BonCommandeItem[]
-
 }
 
 model Categorie {
-  categorie_id   Int      @id @default(autoincrement())
-  nom            String
-  produits       Produit[]
+  categorie_id Int       @id @default(autoincrement())
+  nom          String
+  produits     Produit[]
 }
 
 model Stock {
-  stock_id         Int      @id @default(autoincrement())
-  produit_id       Int      @unique
+  stock_id         Int @id @default(autoincrement())
+  produit_id       Int @unique
   stock_disponible Int
   stock_engage     Int
   stock_total      Int
 
   createdAt DateTime @default(now())
-  produit   Produit   @relation(fields: [produit_id], references: [produit_id])
+  produit   Produit  @relation(fields: [produit_id], references: [produit_id])
 }
 
-
 model AjustementsDeStock {
-  ajustement_id     Int     @id @default(autoincrement())
-  produit_id        Int
-  quantite_ajustee  Int
-  raison            String
-  utilisateur_id    Int     //Change this After we design the user Roles 
-  timestamp         DateTime
+  ajustement_id    Int      @id @default(autoincrement())
+  produit_id       Int
+  quantite_ajustee Int
+  raison           String
+  utilisateur_id   Int //Change this After we design the user Roles 
+  timestamp        DateTime @default(now())
 
-  produit           Produit @relation(fields: [produit_id], references: [produit_id])
+  produit Produit @relation(fields: [produit_id], references: [produit_id])
 }
 
 enum CommandeStatus {
@@ -78,71 +75,71 @@ enum ColisStatus {
 }
 
 model Client {
-  client_id      Int       @id @default(autoincrement())
-  nom            String
-  email          String    @unique
-  nomSociete     String?
-  telephone      String?
-  adresse        String?
-  codePostal     Int?
-  Region         String?
-  commandes      Commande[]
+  client_id  Int        @id @default(autoincrement())
+  nom        String
+  email      String     @unique
+  nomSociete String?
+  telephone  String?
+  adresse    String?
+  codePostal Int?
+  Region     String?
+  commandes  Commande[]
 
-  createdAt      DateTime @default(now())
+  createdAt DateTime @default(now())
 }
 
 model Commande {
-  commande_id Int       @id @default(autoincrement())
+  commande_id Int            @id @default(autoincrement())
   client_id   Int
   status      CommandeStatus @default(ENCOURS)
   total       Float
-  facturee    Boolean @default(false) 
-  payee       Boolean @default(false)
-  createdAt   DateTime  @default(now()) 
-  updatedAt   DateTime  @updatedAt @default(now())
+  facturee    Boolean        @default(false)
+  payee       Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @default(now()) @updatedAt
 
-  client      Client    @relation(fields: [client_id], references: [client_id])
-  commandeItems  CommandeItem[]
-  colis       Colis[]
-  factures    Facture[]
-  paiments    Paiement[]
+  client        Client         @relation(fields: [client_id], references: [client_id])
+  commandeItems CommandeItem[]
+  colis         Colis[]
+  factures      Facture[]
+  paiments      Paiement[]
 }
 
 model Facture {
-  facture_id Int @id @default(autoincrement())
-  command_id Int
-  montant    Float
-  date_emission DateTime   @default(now())
-  commande Commande @relation(fields: [command_id],references: [commande_id])
+  facture_id    Int      @id @default(autoincrement())
+  command_id    Int
+  montant       Float
+  date_emission DateTime @default(now())
+  commande      Commande @relation(fields: [command_id], references: [commande_id])
 }
 
-model Paiement{
-  paiement_id Int @id @default(autoincrement())
-  command_id Int 
-  montant Float
-  date_paiment DateTime  @default(now())
+model Paiement {
+  paiement_id  Int      @id @default(autoincrement())
+  command_id   Int
+  montant      Float
+  date_paiment DateTime @default(now())
 
-commande Commande @relation(fields: [command_id],references: [commande_id])
+  commande Commande @relation(fields: [command_id], references: [commande_id])
 }
 
 model Colis {
-  colis_id    Int       @id @default(autoincrement())
+  colis_id    Int         @id @default(autoincrement())
   commande_id Int
   status      ColisStatus @default(EMBALLE)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt @default(now())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @default(now()) @updatedAt
 
-  commande    Commande  @relation(fields: [commande_id], references: [commande_id])
+  commande Commande @relation(fields: [commande_id], references: [commande_id])
 }
 
 model CommandeItem {
-  commandeItem_id Int     @id @default(autoincrement())
+  commandeItem_id Int @id @default(autoincrement())
   commande_id     Int
   produit_id      Int
   quantite        Int
 
-  commande        Commande @relation(fields: [commande_id], references: [commande_id])
-  produit         Produit  @relation(fields: [produit_id], references: [produit_id])
+  commande Commande @relation(fields: [commande_id], references: [commande_id])
+  produit  Produit  @relation(fields: [produit_id], references: [produit_id])
 }
 
 enum BonCommandeStatus {
@@ -151,38 +148,38 @@ enum BonCommandeStatus {
 }
 
 model Fournisseur {
-  fournisseur_id Int       @id @default(autoincrement())
+  fournisseur_id Int           @id @default(autoincrement())
   nom            String
-  email          String    @unique
-  nomSociete     String? 
+  email          String        @unique
+  nomSociete     String?
   telephone      String?
   adresse        String?
   codePostal     Int?
   Region         String?
   bonCommandes   BonCommande[]
 
-  createdAt      DateTime  @default(now())
+  createdAt DateTime @default(now())
 }
 
 model BonCommande {
-  bonCommande_id   Int                  @id @default(autoincrement())
-  fournisseur_id   Int
-  status           BonCommandeStatus    @default(EMIS)
-  total            Float
-  createdAt        DateTime            @default(now())
-  updatedAt        DateTime             @updatedAt @default(now())
+  bonCommande_id Int               @id @default(autoincrement())
+  fournisseur_id Int
+  status         BonCommandeStatus @default(EMIS)
+  total          Float
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @default(now()) @updatedAt
 
-  fournisseur      Fournisseur          @relation(fields: [fournisseur_id], references: [fournisseur_id])
+  fournisseur      Fournisseur       @relation(fields: [fournisseur_id], references: [fournisseur_id])
   bonCommandeItems BonCommandeItem[]
 }
 
 model BonCommandeItem {
-  bonCommandeItem_id Int     @id @default(autoincrement())
+  bonCommandeItem_id Int   @id @default(autoincrement())
   bonCommande_id     Int
   produit_id         Int
   quantite           Int
   prixUnitaire       Float
 
-  bonCommande        BonCommande @relation(fields: [bonCommande_id], references: [bonCommande_id])
-  produit            Produit     @relation(fields: [produit_id], references: [produit_id])
+  bonCommande BonCommande @relation(fields: [bonCommande_id], references: [bonCommande_id])
+  produit     Produit     @relation(fields: [produit_id], references: [produit_id])
 }
