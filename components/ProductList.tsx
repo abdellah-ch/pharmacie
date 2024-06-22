@@ -19,9 +19,6 @@ import {
 const ProductList = () => {
   const { products, fetchProducts, loading } = useProductsStore();
 
-  products.forEach((product) => {
-    product.montantTotal = product.quantite * product.prix_Achat;
-  });
   const [selectionBehavior, setSelectionBehavior] = useState("toggle");
   const router = useRouter();
 
@@ -29,7 +26,9 @@ const ProductList = () => {
   useEffect(() => {
     fetchProducts(15);
   }, [fetchProducts]);
-
+  products.forEach((product) => {
+    product.montantTotal = product.quantite * product.prix_Achat;
+  });
   const handleRowClick = (produit_id: number) => {
     const selectedProduct = products.find(
       (product) => product.produit_id === produit_id
@@ -112,7 +111,14 @@ const ProductList = () => {
         </TableHeader>
         <TableBody items={products}>
           {(item) => (
-            <TableRow key={item.produit_id} className="cursor-pointer">
+            <TableRow
+              key={item.produit_id}
+              className={
+                item.Seuil_reapprovisionnement > item.quantite
+                  ? "bg-red-400 cursor-pointer"
+                  : "cursor-pointer"
+              }
+            >
               {(columnKey) => (
                 <TableCell>{getKeyValue(item, columnKey)}</TableCell>
               )}

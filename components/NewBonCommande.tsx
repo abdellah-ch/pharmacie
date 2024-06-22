@@ -38,36 +38,6 @@ const BonCommandeHeader = () => {
             <Plus /> Nouveau
           </Button>
         </Link>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button className="p-2 bg-white text-black hover:bg-white">
-              <GripVertical />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56">
-            <DropdownMenuLabel>Trier Par</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuCheckboxItem
-              checked={showStatusBar}
-              onCheckedChange={setShowStatusBar}
-            >
-              Status Bar
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem
-              checked={showActivityBar}
-              onCheckedChange={setShowActivityBar}
-              disabled
-            >
-              Activity Bar
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem
-              checked={showPanel}
-              onCheckedChange={setShowPanel}
-            >
-              Panel
-            </DropdownMenuCheckboxItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
     </div>
   );
