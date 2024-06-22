@@ -262,3 +262,56 @@ export const getStockCounts = async () => {
     totalProductCount,
   };
 };
+
+
+interface CreateAjustementInput {
+  produit_id: number;
+  NumeroRef: string;
+  quantite_ajustee: number;
+  raison: string;
+}
+
+export async function createAjustement(input: CreateAjustementInput) {
+  const { produit_id, NumeroRef, quantite_ajustee, raison } = input;
+
+  return await prisma.$transaction(async (prisma) => {
+    // Step 1: Create AjustementDeStock record
+    const ajustement = await prisma.ajustementsDeStock.create({
+      data: {
+        produit_id,
+        NumeroRef,
+        quantite_ajustee,
+        raison,
+      },
+    });
+
+    // Step 2: Update Stock record
+    const stock = await prisma.stock.update({
+      where: { produit_id },
+      data: {
+        stock_disponible: {
+          increment: quantite_ajustee, // Assuming positive quantite_ajustee means increase
+        },
+        stock_total: {
+          increment: quantite_ajustee,
+        },
+      },
+    });
+
+    // Step 3: Update Produit record
+    const produit = await prisma.produit.update({
+      where: { produit_id },
+      data: {
+        quantite: {
+          increment: quantite_ajustee,
+        },
+      },
+    });
+
+    return {
+      ajustement,
+      stock,
+      produit,
+    };
+  });
+}

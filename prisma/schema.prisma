@@ -56,9 +56,10 @@ model Stock {
 model AjustementsDeStock {
   ajustement_id    Int      @id @default(autoincrement())
   produit_id       Int
+  NumeroRef        String   @default("")
   quantite_ajustee Int
   raison           String
-  utilisateur_id   Int //Change this After we design the user Roles 
+  utilisateur_id   Int? //Change this After we design the user Roles 
   timestamp        DateTime @default(now())
 
   produit Produit @relation(fields: [produit_id], references: [produit_id])
