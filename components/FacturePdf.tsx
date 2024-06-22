@@ -1,20 +1,36 @@
 import { useState, useEffect } from "react";
 const FacturePdf = (props: { commandId: number }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [pdfUrl, setPdfUrl] = useState("");
-
-  useEffect(() => {
-    async function fetchPdfUrl() {
+  const fetchPdfUrl = async () => {
+    setIsLoading(true);
+    try {
       const response = await fetch(
-        `/api/pdfFactureGeneration?commandeId=${props.commandId}`
+        `/api/pdfColisGeneration?commandeId=${props.commandId}`,
+        {
+          method: "GET",
+        }
       );
-      const data = await response.json();
-      if (data.pdfUrl) {
-        setPdfUrl(data.pdfUrl);
-      }
-    }
 
+      if (!response.ok) {
+        throw new Error(`Error fetching PDF: ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      setPdfUrl(url);
+    } catch (error) {
+      console.error("Error fetching PDF:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
     fetchPdfUrl();
   }, [props.commandId]);
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
   return (
     <div className="w-full">
       {pdfUrl ? (

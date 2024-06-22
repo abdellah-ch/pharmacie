@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { prisma } from "../../../lib/prisma"; // Adjust the import path based on your project structure
-import { writeFileSync, existsSync } from "fs";
-import { join } from "path";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -10,17 +8,6 @@ export async function GET(req: NextRequest) {
 
   if (!commandeId) {
     return NextResponse.json({ error: "Missing commandeId" }, { status: 400 });
-  }
-
-  const pdfPath = join(
-    process.cwd(),
-    `public/ordre-livraison-${commandeId}.pdf`
-  );
-
-  if (existsSync(pdfPath)) {
-    return NextResponse.json({
-      pdfUrl: `/ordre-livraison-${commandeId}.pdf`,
-    });
   }
 
   // Fetch the existing Colis data with status LIVREE
@@ -51,12 +38,17 @@ export async function GET(req: NextRequest) {
   }
 
   // If colis exists, generate the Ordre de Livraison PDF
-  await generateOrdreDeLivraisonPdf(colis, pdfPath);
-  return NextResponse.json({ pdfUrl: `/ordre-livraison-${commandeId}.pdf` });
+  const pdfBytes = await generateOrdreDeLivraisonPdf(colis);
+  return new NextResponse(pdfBytes, {
+    headers: {
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename="ordre-livraison-${commandeId}.pdf"`,
+    },
+  });
 }
 
 // Function to generate Ordre de Livraison PDF
-async function generateOrdreDeLivraisonPdf(colis: any, pdfPath: any) {
+async function generateOrdreDeLivraisonPdf(colis: any): Promise<Uint8Array> {
   // Create a PDF document
   const pdfDoc = await PDFDocument.create();
   const page = pdfDoc.addPage([600, 700]);
@@ -70,11 +62,11 @@ async function generateOrdreDeLivraisonPdf(colis: any, pdfPath: any) {
 
   // Helper function to draw text centered in the row
   const drawCenteredText = (
-    text: any,
-    x: any,
-    y: any,
-    rowHeight: any,
-    options = {}
+    text: string,
+    x: number,
+    y: number,
+    rowHeight: number,
+    options: any = {}
   ) => {
     const textY = y - (rowHeight - fontSize) / 2;
     page.drawText(text, {
@@ -155,7 +147,7 @@ async function generateOrdreDeLivraisonPdf(colis: any, pdfPath: any) {
 
   // Order Items
   let currentItemY = tableHeaderY - rowHeight;
-  colis.commande.commandeItems.forEach((item: any, index: any) => {
+  colis.commande.commandeItems.forEach((item: any) => {
     page.drawRectangle({
       x: margin - 5,
       y: currentItemY - rowHeight + 5,
@@ -193,7 +185,5 @@ async function generateOrdreDeLivraisonPdf(colis: any, pdfPath: any) {
 
   // Serialize the PDFDocument to bytes (a Uint8Array)
   const pdfBytes = await pdfDoc.save();
-
-  // Save PDF to a file
-  writeFileSync(pdfPath, pdfBytes);
+  return pdfBytes;
 }

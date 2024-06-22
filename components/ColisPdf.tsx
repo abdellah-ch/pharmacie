@@ -33,30 +33,56 @@ const ColisPdf = (props: { commandId: number }) => {
 
   const [pdfUrl, setPdfUrl] = useState("");
 
+  const fetchPdfColis = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `/api/pdfColisGeneration?commandeId=${props.commandId}`,
+        {
+          method: "GET",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error fetching PDF: ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      setPdfUrl(url);
+    } catch (error) {
+      console.error("Error fetching PDF:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchPdflivraison = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `/api/pdfOrdreLivraisonGeneration?commandeId=${props.commandId}`,
+        {
+          method: "GET",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error fetching PDF: ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      setPdfUrl(url);
+    } catch (error) {
+      console.error("Error fetching PDF:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   useEffect(() => {
     checkColis();
-    async function fetchPdfColis() {
-      const response = await fetch(
-        `/api/pdfColisGeneration?commandeId=${props.commandId}`
-      );
-      const data = await response.json();
-      if (data.pdfUrl) {
-        setPdfUrl(data.pdfUrl);
-      }
-      //
-      // setIsLoading(false);
-    }
-    async function fetchPdflivraison() {
-      const response = await fetch(
-        `/api/pdfOrdreLivraisonGeneration?commandeId=${props.commandId}`
-      );
-      const data = await response.json();
-      if (data.pdfUrl) {
-        setPdfUrl(data.pdfUrl);
-      }
-      //
-      // setIsLoading(false);
-    }
+
     if (status === "EMBALLE") {
       fetchPdfColis();
     } else {

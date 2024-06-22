@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { prisma } from "../../../lib/prisma"; // Adjust the import path based on your project structure
-import { writeFileSync, existsSync } from "fs";
-import { join } from "path";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -10,14 +8,6 @@ export async function GET(req: NextRequest) {
 
   if (!commandeId) {
     return NextResponse.json({ error: "Missing commandeId" }, { status: 400 });
-  }
-
-  const pdfPath = join( `/tmp/facture-${commandeId}.pdf`);
-
-  if (existsSync(pdfPath)) {
-    return NextResponse.json({
-      pdfUrl: `/tmp/facture-${commandeId}.pdf`,
-    });
   }
 
   // Fetch the commande data
@@ -50,11 +40,11 @@ export async function GET(req: NextRequest) {
 
   // Helper function to draw text centered in the row
   const drawCenteredText = (
-    text: any,
-    x: any,
-    y: any,
-    rowHeight: any,
-    options = {}
+    text: string,
+    x: number,
+    y: number,
+    rowHeight: number,
+    options: any = {}
   ) => {
     const textY = y - (rowHeight - fontSize) / 2;
     page.drawText(text, {
@@ -135,7 +125,7 @@ export async function GET(req: NextRequest) {
 
   // Order Items
   let currentItemY = tableHeaderY - rowHeight;
-  commande.commandeItems.forEach((item, index) => {
+  commande.commandeItems.forEach((item: any) => {
     page.drawRectangle({
       x: margin - 5,
       y: currentItemY - rowHeight + 5,
@@ -190,11 +180,11 @@ export async function GET(req: NextRequest) {
   // Serialize the PDFDocument to bytes (a Uint8Array)
   const pdfBytes = await pdfDoc.save();
 
-  // Save PDF to a file
-  writeFileSync(pdfPath, pdfBytes);
-
-  // Return URL to the PDF file
-  return NextResponse.json({
-    pdfUrl: `/tmp/facture-${commandeId}.pdf`,
+  // Return the PDF as a response
+  return new NextResponse(pdfBytes, {
+    headers: {
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename="facture-${commandeId}.pdf"`,
+    },
   });
 }
