@@ -4,7 +4,7 @@ import NextAuth, { AuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { prisma } from '@/lib/prisma';
-import { NextApiRequest, NextApiResponse } from 'next';
+// import { NextApiRequest, NextApiResponse } from 'next';
 
 const options: AuthOptions = {
   providers: [
@@ -51,6 +51,6 @@ const options: AuthOptions = {
 
 export { handler as GET, handler as POST };
 
-async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: any, res: any) {
   return NextAuth(req, res, options);
 }
