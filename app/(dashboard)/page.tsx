@@ -2,7 +2,6 @@
 import { getStockCounts, getTotalStockInfo } from "@/lib/Produit";
 import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
-
 import "chart.js/auto";
 
 interface RevenueData {

@@ -1,3 +1,7 @@
+"use client";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
 import Link from "next/link";
 import { LucideIcon } from "lucide-react";
 
@@ -10,6 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 
 interface NavProps {
+  isNotLogout?: boolean;
   links: {
     title: string;
     label?: string;
@@ -19,12 +24,20 @@ interface NavProps {
   }[];
 }
 
-export function Nav({ links }: NavProps) {
+export function Nav({ isNotLogout, links }: NavProps) {
   const isCollapsed = true;
+  const router = useRouter();
   return (
     <div
       data-collapsed={isCollapsed}
       className="group flex flex-col gap-4 py-2 data-[collapsed=true]:py-2"
+      onClick={() => {
+        if (isNotLogout) {
+          signOut({ redirect: false }).then(() => {
+            router.push("/signin"); // Redirect to the login page after logout
+          });
+        }
+      }}
     >
       <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
         {links.map((link, index) =>

@@ -13,6 +13,7 @@ import {
   User,
   ArrowDownUp,
   FileCheck,
+  LogOut,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -129,6 +130,18 @@ const Sidebar = () => {
           ]}
         />
         <Separator />
+        <Nav
+          isNotLogout={true}
+          links={[
+            {
+              title: "Se déconnecter",
+              path: "#",
+              label: "",
+              icon: LogOut, // Placeholder for Lucid icon
+              variant: "ghost",
+            },
+          ]}
+        />
       </div>
     </ResizablePanel>
   );
