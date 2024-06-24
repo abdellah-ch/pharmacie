@@ -258,3 +258,21 @@ export async function updateBonCommandeStatusToRecu(bonCommandeId: number): Prom
     throw error;
   }
 }
+
+
+export async function getCommandItemsByDate(startDate:any,endDate:any){
+      const result = await prisma.bonCommandeItem.findMany({
+        where: {
+          bonCommande: {
+            createdAt: {
+              gte: startDate,
+              lte: endDate,
+            },
+          },
+        },
+        include: {
+          produit: true,
+        },
+      });
+      return result;
+}
