@@ -17,7 +17,7 @@ interface RevenueData {
 }
 export default function Home() {
   const [selectedBonTimeframe, setSelectedBonTimeframe] =
-    useState<string>("Cemois");
+    useState<string>("Ce mois");
 
   const [qte, setQte] = useState<number | undefined>(undefined);
   const [year, setYear] = useState<number>(new Date().getFullYear());
@@ -95,24 +95,39 @@ export default function Home() {
       let endDate = new Date();
 
       switch (selectedBonTimeframe) {
+        case "Aujourd'hui":
+          startDate.setDate(startDate.getDate());
+          startDate.setHours(0, 0, 0, 0);
+
+          endDate.setDate(startDate.getDate());
+          endDate.setHours(23, 59, 59, 999);
+
+          break;
         case "Hier":
           startDate.setDate(startDate.getDate() - 1);
-          endDate.setDate(endDate.getDate() + 1);
+
+          startDate.setHours(0, 0, 0, 0);
+          endDate.setDate(endDate.getDate() - 1);
+
+          endDate.setHours(23, 59, 59, 999);
           break;
-        case "Cettesemaine":
-          startDate.setDate(startDate.getDate() - startDate.getDay());
+        case "Cette semaine":
+          startDate.setDate(startDate.getDate() - 7);
+
+          startDate.setHours(0, 0, 0, 0);
+
           break;
-        case "Cemois":
+        case "Ce mois":
           startDate = new Date(
             startDate.getFullYear(),
             startDate.getMonth(),
             1
           );
           break;
-        case "Cetteannée":
+        case "Cette année":
           startDate = new Date(startDate.getFullYear(), 0, 1);
           break;
-        case "Semaineprécédente":
+        case "Semaine précédente":
           const dayOfWeek = startDate.getDay();
           startDate.setDate(startDate.getDate() - dayOfWeek - 7);
           endDate.setDate(endDate.getDate() - dayOfWeek - 1);
@@ -205,9 +220,29 @@ export default function Home() {
             CA mensuel
           </h2>
         </div>
-        <div className="mt-7 h-full w-[60%] p-4">
-          {/* CA mensuel chart  */}
-          <Bar data={data} />
+        <div className="flex">
+          <div className="mt-7 h-full w-[60%] p-4 flex ">
+            {/* CA mensuel chart  */}
+            <Bar data={data} />
+          </div>
+          <div className="w-[37%] flex justify-center items-center">
+            <div className="">
+              <h2 className="text-lg font-semibold text-foreground">
+                Total des ventes
+              </h2>
+              <div className="flex items-center p-4 mt-2 border-l-4 border-blue-500 bg-blue-50 rounded-md">
+                <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">
+                    VENTES DIRECTES
+                  </p>
+                  <p className="text-lg font-semibold text-foreground">
+                    MAD0.00
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -226,7 +261,7 @@ export default function Home() {
             <PopoverContent className="p-0 m-0 rounded-none">
               <div className="flex flex-col w-[200px]">
                 <div
-                  onClick={() => setSelectedBonTimeframe("Aujourdhui")}
+                  onClick={() => setSelectedBonTimeframe("Aujourd'hui")}
                   className="text-small  px-4 py-2 cursor-pointer hover:bg-zinc-200"
                 >
                   Aujourd'hui
@@ -238,10 +273,22 @@ export default function Home() {
                   Hier
                 </div>
                 <div
-                  onClick={() => setSelectedBonTimeframe("Cemois")}
+                  onClick={() => setSelectedBonTimeframe("Cette semaine")}
+                  className="text-small  px-4 py-2 cursor-pointer hover:bg-zinc-200"
+                >
+                  Cette semaine
+                </div>
+                <div
+                  onClick={() => setSelectedBonTimeframe("Ce mois")}
                   className="text-small  px-4 py-2 cursor-pointer hover:bg-zinc-200"
                 >
                   Ce mois
+                </div>
+                <div
+                  onClick={() => setSelectedBonTimeframe("Cette année")}
+                  className="text-small  px-4 py-2 cursor-pointer hover:bg-zinc-200"
+                >
+                  Cette année
                 </div>
               </div>
             </PopoverContent>
