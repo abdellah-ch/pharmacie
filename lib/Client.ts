@@ -200,3 +200,22 @@ export const getCommandsByClientAndDateRange = async (
     throw new Error("Could not fetch commands");
   }
 };
+
+export const getTotalSalesForYear = async (year: number) => {
+  const startDate = new Date(year, 0, 1); // January 1 of the given year
+  const endDate = new Date(year + 1, 0, 1); // January 1 of the next year
+
+  const commandes = await prisma.commande.findMany({
+    where: {
+      createdAt: {
+        gte: startDate,
+        lt: endDate,
+      },
+      status: 'LIVREE' // Ensure the status is LIVREE
+    },
+  });
+
+  const totalSales = commandes.reduce((acc, commande) => acc + commande.total, 0);
+
+  return totalSales;
+};

@@ -12,6 +12,7 @@ import {
 } from "@nextui-org/react";
 import { prisma } from "@/lib/prisma";
 import { getCommandItemsByDate } from "@/lib/Fournisseur";
+import { getTotalSalesForYear } from "@/lib/Client";
 interface RevenueData {
   monthlyRevenue: number[];
 }
@@ -27,6 +28,7 @@ export default function Home() {
   const [quantityOrdered, setQuantityOrdered] = useState(0);
   const [totalCost, setTotalCost] = useState(0);
   const [productsCount, setProductsCount] = useState<number>();
+  const [totalSales, setTotalSales] = useState<number>(0);
 
   const fetchRevenueData = async (selectedYear: number) => {
     try {
@@ -86,6 +88,15 @@ export default function Home() {
     });
 
     fetchRevenueData(year);
+  }, [year]);
+
+  useEffect(() => {
+    const fetchTotalSales = async () => {
+      const sales = await getTotalSalesForYear(year);
+      setTotalSales(sales);
+    };
+
+    fetchTotalSales();
   }, [year]);
 
   useEffect(() => {
@@ -215,10 +226,40 @@ export default function Home() {
       </div>
       {/* split */}
       <div className=" mt-12 h-auto bg-white dark:bg-zinc-800 rounded-lg shadow-md">
-        <div className="bg-[#f9f9fb] p-4 rounded-lg rounded-b-none border-1 border-x-0">
+        <div className="flex justify-between bg-[#f9f9fb] p-4 rounded-lg rounded-b-none border-1 border-x-0">
           <h2 className="text-lg  font-mono text-zinc-900 dark:text-zinc-100  bg-[#f9f9fb]">
             CA mensuel
           </h2>
+          <Popover placement="bottom-start" offset={20} showArrow>
+            <PopoverTrigger>
+              <div className="flex justify-center items-center cursor-pointer text-blue-500">
+                <p className="text-zinc-900">{year}</p>
+                <RiArrowDropDownLine className="text-2xl" />
+              </div>
+            </PopoverTrigger>
+            <PopoverContent className="p-0 m-0 rounded-none">
+              <div className="flex flex-col w-[200px]">
+                <div
+                  onClick={() => setYear(2024)}
+                  className="text-small  px-4 py-2 cursor-pointer hover:bg-zinc-200"
+                >
+                  2024
+                </div>
+                <div
+                  onClick={() => setYear(2023)}
+                  className="text-small  px-4 py-2 cursor-pointer hover:bg-zinc-200"
+                >
+                  2023
+                </div>
+                <div
+                  onClick={() => setYear(2022)}
+                  className="text-small  px-4 py-2 cursor-pointer hover:bg-zinc-200"
+                >
+                  2022
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
         <div className="flex">
           <div className="mt-7 h-full w-[60%] p-4 flex ">
@@ -237,7 +278,7 @@ export default function Home() {
                     VENTES DIRECTES
                   </p>
                   <p className="text-lg font-semibold text-foreground">
-                    MAD0.00
+                    MAD {totalSales}
                   </p>
                 </div>
               </div>
