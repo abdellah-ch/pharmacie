@@ -33,7 +33,7 @@ function DateFilterCommandesModel() {
   const pathname = usePathname();
   const { isOpen, onClose } = useFilter();
   const [query, setQuery] = useState<string>("");
-  console.log(query);
+  // console.log(query);
 
   const [startDate, setStartDate] = useState<Date>();
 
@@ -93,7 +93,7 @@ function DateFilterCommandesModel() {
                   onSelect={(date) => {
                     if (date) {
                       const formattedDate = format(date, "yyyy-MM-dd");
-                      console.log(formattedDate);
+                      // console.log(formattedDate);
 
                       setStartDate(new Date(formattedDate));
                     }
@@ -127,7 +127,7 @@ function DateFilterCommandesModel() {
                   onSelect={(date) => {
                     if (date) {
                       const formattedDate = format(date, "yyyy-MM-dd");
-                      console.log(formattedDate);
+                      // console.log(formattedDate);
 
                       setEndDate(new Date(formattedDate));
                     }

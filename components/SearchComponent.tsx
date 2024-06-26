@@ -9,7 +9,7 @@ const SearchComponent = () => {
   const { searchProducts } = useProductsStore();
   const { searchClient, fetchClient } = useClient();
   const { searchFournisseur } = useFournisseur();
-  console.log(pathname);
+  // console.log(pathname);
 
   const handleInputChange = (e: any) => {
     const query = e.target.value;

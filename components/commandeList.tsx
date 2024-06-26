@@ -21,7 +21,7 @@ import {
 const CommandeList = () => {
   //   const { products, fetchProducts, loading } = useProductsStore();
   const { commandes, loading, fetchCommands } = useClient();
-  console.log(commandes);
+  // console.log(commandes);
 
   //   products.forEach((product) => {
   //     product.montantTotal = product.quantite * product.prix_Achat;

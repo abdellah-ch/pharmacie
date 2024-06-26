@@ -1,19 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 const CommandPdf = (props: { commandId: number }) => {
-  const [loading, setLoading] = useState(false);
-  const [pdfUrl, setPdfUrl] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  const [pdfUrl, setPdfUrl] = useState<string | undefined>(undefined);
 
-  const fetchPDF = async () => {
+  const fetchPDF = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch(
         `/api/pdfCommandeGeneration?commandeId=${props.commandId}`,
         {
           method: "GET",
-          headers: {
-            "Content-Type": "application/pdf",
-          },
         }
       );
 
@@ -29,15 +26,18 @@ const CommandPdf = (props: { commandId: number }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [props.commandId]);
 
   useEffect(() => {
     fetchPDF();
-  }, [props.commandId]);
+  }, [fetchPDF]);
 
+  if (loading) {
+    return <div>loading...</div>;
+  }
   return (
     <div className="w-full">
-      {pdfUrl ? (
+      {pdfUrl != undefined ? (
         <iframe
           src={pdfUrl}
           width="100%"
@@ -45,7 +45,7 @@ const CommandPdf = (props: { commandId: number }) => {
           style={{ border: "none" }}
         />
       ) : (
-        <p>Loading...</p>
+        <p>loading ....</p>
       )}
     </div>
   );

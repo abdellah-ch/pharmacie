@@ -219,3 +219,22 @@ export const getTotalSalesForYear = async (year: number) => {
 
   return totalSales;
 };
+
+
+export async function checkCommandStatus(commandId: number): Promise<string | null> {
+  try {
+    const command = await prisma.commande.findUnique({
+      where: { commande_id: commandId },
+      select: { status: true },
+    });
+
+    if (!command) {
+      return null;
+    }
+
+    return command.status;
+  } catch (error) {
+    console.error('Error checking command status:', error);
+    return null;
+  }
+}

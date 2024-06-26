@@ -13,23 +13,46 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useCommadeClientState } from "@/stores/clientStore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CommandPdf from "./CommandPdf";
 import ColisPdf from "./ColisPdf";
 import FacturePdf from "./FacturePdf";
+import { MdEmail } from "react-icons/md";
+import { CiBookmarkCheck } from "react-icons/ci";
+import { checkCommandStatus } from "@/lib/Client";
 
-const PdfViewer = (props: { id: number }) => {
-  let url = `/api/pdfCommandeGeneration?commandeId=${props.id}`;
+// const PdfViewer = (props: { id: number }) => {
+//   let url = `/api/pdfCommandeGeneration?commandeId=${props.id}`;
 
-  return (
-    <div>
-      <iframe src={url} width={800} height={500}></iframe>
-    </div>
-  );
-};
+//   return (
+//     <div>
+//       <iframe src={url} width={800} height={500}></iframe>
+//     </div>
+//   );
+// };
+
 const CommandeInfoSheet = () => {
   const { isOpen, commandId, onClose } = useCommadeClientState();
   const [component, setComponent] = useState<string>("Commande");
+  const [status, setStatus] = useState<string>("loading");
+  const getStatus = async () => {
+    try {
+      console.log(commandId);
+
+      const status = await checkCommandStatus(commandId);
+      // console.log(status);
+
+      if (status) {
+        setStatus(status);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getStatus();
+  }, [commandId]);
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent>
@@ -88,14 +111,42 @@ const CommandeInfoSheet = () => {
             </div>
           </SheetDescription>
         </SheetHeader>
-        <div className="mt-8 flex flex-col justify-center items-center w-full">
+        <div className="mt-4 flex flex-col justify-center items-center w-full">
           {/* <PdfViewer id={commandId} /> */}
           {component === "Commande" ? (
-            <CommandPdf commandId={commandId} />
+            <>
+              <div className=" w-full mt-0 mb-4 flex items-center space-x-4 p-2 bg-[#ebeaf2s] dark:bg-zinc-800 border-y border-zinc-200 dark:border-zinc-700">
+                <button className="flex items-center space-x-1 text-zinc-700 dark:text-zinc-300 hover:text-blue-500">
+                  <MdEmail />
+                  <span>Envoyer un E-mail</span>
+                </button>
+                <div className="relative"></div>
+                <button className="flex items-center space-x-1 text-zinc-700 dark:text-zinc-300 hover:text-blue-500">
+                  <CiBookmarkCheck />
+
+                  <span>{status}</span>
+                </button>
+              </div>
+              <CommandPdf commandId={commandId} />
+            </>
           ) : component === "Colis" ? (
             <ColisPdf commandId={commandId} />
           ) : (
-            <FacturePdf commandId={commandId} />
+            <>
+              <div className="w-full mt-0 mb-4 flex items-center space-x-4 p-2 bg-[#ebeaf2s] dark:bg-zinc-800 border-y border-zinc-200 dark:border-zinc-700">
+                <button className="flex items-center space-x-1 text-zinc-700 dark:text-zinc-300 hover:text-blue-500">
+                  <MdEmail />
+                  <span>Envoyer un E-mail</span>
+                </button>
+                <div className="relative"></div>
+                <button className="flex items-center space-x-1 text-zinc-700 dark:text-zinc-300 hover:text-blue-500">
+                  <CiBookmarkCheck />
+
+                  <span>{status}</span>
+                </button>
+              </div>
+              <FacturePdf commandId={commandId} />
+            </>
           )}
         </div>
       </SheetContent>
