@@ -114,9 +114,7 @@ const BonCommandeSheet = () => {
               </button>
             </div>
             <div className="w-full mt-7">
-              {loading ? (
-                <p>Loading...</p>
-              ) : pdfUrl ? (
+              {pdfUrl ? (
                 <iframe
                   src={pdfUrl}
                   width="100%"
@@ -124,7 +122,7 @@ const BonCommandeSheet = () => {
                   style={{ border: "none" }}
                 />
               ) : (
-                <p>No PDF available</p>
+                <p>loading ...</p>
               )}
             </div>
           </>

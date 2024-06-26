@@ -13,6 +13,7 @@ import {
 import { prisma } from "@/lib/prisma";
 import { getCommandItemsByDate } from "@/lib/Fournisseur";
 import { getTotalSalesForYear } from "@/lib/Client";
+import ActiveProductsChart from "@/components/ActiveProductsChart";
 interface RevenueData {
   monthlyRevenue: number[];
 }
@@ -287,68 +288,86 @@ export default function Home() {
         </div>
       </div>
 
-      <div className=" mt-12 w-[45%] lg:w-[40%] bg-white dark:bg-zinc-800 rounded-lg shadow-md">
-        <div className="bg-[#f9f9fb] p-4 rounded-lg rounded-b-none border-1 border-x-0 flex justify-between">
-          <h2 className="text-lg  font-mono text-zinc-900 dark:text-zinc-100  bg-[#f9f9fb]">
-            Bon de commande
-          </h2>
-          <Popover placement="bottom-start" offset={20} showArrow>
-            <PopoverTrigger>
-              <div className="flex justify-center items-center cursor-pointer text-blue-500">
-                <p className="text-zinc-900">{selectedBonTimeframe}</p>
-                <RiArrowDropDownLine className="text-2xl" />
-              </div>
-            </PopoverTrigger>
-            <PopoverContent className="p-0 m-0 rounded-none">
-              <div className="flex flex-col w-[200px]">
-                <div
-                  onClick={() => setSelectedBonTimeframe("Aujourd'hui")}
-                  className="text-small  px-4 py-2 cursor-pointer hover:bg-zinc-200"
-                >
-                  Aujourd'hui
+      <div className="flex flex-col lg:flex-row  lg:gap-20 ">
+        <div className="h-[300px] mt-12 w-[45%] lg:w-[40%] bg-white dark:bg-zinc-800 rounded-lg shadow-md">
+          <div className="bg-[#f9f9fb] p-4 rounded-lg rounded-b-none border-1 border-x-0 flex justify-between">
+            <h2 className="text-lg  font-mono text-zinc-900 dark:text-zinc-100  bg-[#f9f9fb]">
+              Bon de commande
+            </h2>
+            <Popover placement="bottom-start" offset={20} showArrow>
+              <PopoverTrigger>
+                <div className="flex justify-center items-center cursor-pointer text-blue-500">
+                  <p className="text-zinc-900">{selectedBonTimeframe}</p>
+                  <RiArrowDropDownLine className="text-2xl" />
                 </div>
-                <div
-                  onClick={() => setSelectedBonTimeframe("Hier")}
-                  className="text-small  px-4 py-2 cursor-pointer hover:bg-zinc-200"
-                >
-                  Hier
+              </PopoverTrigger>
+              <PopoverContent className="p-0 m-0 rounded-none">
+                <div className="flex flex-col w-[200px]">
+                  <div
+                    onClick={() => setSelectedBonTimeframe("Aujourd'hui")}
+                    className="text-small  px-4 py-2 cursor-pointer hover:bg-zinc-200"
+                  >
+                    Aujourd'hui
+                  </div>
+                  <div
+                    onClick={() => setSelectedBonTimeframe("Hier")}
+                    className="text-small  px-4 py-2 cursor-pointer hover:bg-zinc-200"
+                  >
+                    Hier
+                  </div>
+                  <div
+                    onClick={() => setSelectedBonTimeframe("Cette semaine")}
+                    className="text-small  px-4 py-2 cursor-pointer hover:bg-zinc-200"
+                  >
+                    Cette semaine
+                  </div>
+                  <div
+                    onClick={() => setSelectedBonTimeframe("Ce mois")}
+                    className="text-small  px-4 py-2 cursor-pointer hover:bg-zinc-200"
+                  >
+                    Ce mois
+                  </div>
+                  <div
+                    onClick={() => setSelectedBonTimeframe("Cette année")}
+                    className="text-small  px-4 py-2 cursor-pointer hover:bg-zinc-200"
+                  >
+                    Cette année
+                  </div>
                 </div>
-                <div
-                  onClick={() => setSelectedBonTimeframe("Cette semaine")}
-                  className="text-small  px-4 py-2 cursor-pointer hover:bg-zinc-200"
-                >
-                  Cette semaine
-                </div>
-                <div
-                  onClick={() => setSelectedBonTimeframe("Ce mois")}
-                  className="text-small  px-4 py-2 cursor-pointer hover:bg-zinc-200"
-                >
-                  Ce mois
-                </div>
-                <div
-                  onClick={() => setSelectedBonTimeframe("Cette année")}
-                  className="text-small  px-4 py-2 cursor-pointer hover:bg-zinc-200"
-                >
-                  Cette année
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
-        </div>
-        <div className="border-t border-zinc-200 dark:border-zinc-700 p-4">
-          <div className="flex flex-col gap-4 justify-between items-center mb-2 mx-1 border-b-1 p-2">
-            <span className="text-zinc-600 dark:text-zinc-400">
-              Quantité commandée
-            </span>
-            <span className="text-2xl font-semibold text-blue-900 ">
-              {quantityOrdered}
-            </span>
+              </PopoverContent>
+            </Popover>
           </div>
-          <div className="flex flex-col gap-4 justify-between items-center mx-1 p-2">
-            <span className="text-zinc-600 dark:text-zinc-400">Coût total</span>
-            <span className="text-2xl font-semibold text-blue-900 ">
-              {totalCost} MAD
-            </span>
+          <div className="border-t border-zinc-200 dark:border-zinc-700 p-4">
+            <div className="flex flex-col gap-4 justify-between items-center mb-2 mx-1 border-b-1 p-2">
+              <span className="text-zinc-600 dark:text-zinc-400">
+                Quantité commandée
+              </span>
+              <span className="text-2xl font-semibold text-blue-900 ">
+                {quantityOrdered}
+              </span>
+            </div>
+            <div className="flex flex-col gap-4 justify-between items-center mx-1 p-2">
+              <span className="text-zinc-600 dark:text-zinc-400">
+                Coût total
+              </span>
+              <span className="text-2xl font-semibold text-blue-900 ">
+                {totalCost} MAD
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="  mt-12 w-[50%] lg:w-[20%] bg-white dark:bg-zinc-800 rounded-lg shadow-md">
+          <div className="bg-[#f9f9fb] p-4 rounded-lg rounded-b-none border-1 border-x-0 flex justify-between">
+            <h2 className="text-lg  font-mono text-zinc-900 dark:text-zinc-100  bg-[#f9f9fb]">
+              Articles actifs
+            </h2>
+          </div>
+          <div className=" border-t border-zinc-200 dark:border-zinc-700 p-4">
+            <div className="flex justify-center ">
+              <ActiveProductsChart />
+            </div>
+            <div></div>
           </div>
         </div>
       </div>

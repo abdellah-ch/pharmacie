@@ -49,25 +49,29 @@ const AjustementDeProduit = (props: {
   const NewQuantiteRef = useRef<HTMLInputElement>(null);
   const RaisonRef = useRef<HTMLInputElement>(null);
   const DescriptionRef = useRef<HTMLTextAreaElement>(null);
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // console.log(ajustement);
-    if (
-      SelectedProduct?.produit_id &&
-      NumRef.current?.value &&
-      NewQuantiteRef.current?.value &&
-      RaisonRef.current?.value &&
-      DescriptionRef.current?.value
-    ) {
-      createAjustement({
-        produit_id: SelectedProduct?.produit_id,
-        NumeroRef: NumRef.current?.value,
-        quantite_ajustee: Number(NewQuantiteRef.current?.value),
-        raison: RaisonRef.current?.value,
-      });
+    try {
+      if (
+        SelectedProduct?.produit_id &&
+        NumRef.current?.value &&
+        NewQuantiteRef.current?.value &&
+        RaisonRef.current?.value &&
+        DescriptionRef.current?.value
+      ) {
+        await createAjustement({
+          produit_id: SelectedProduct?.produit_id,
+          NumeroRef: NumRef.current?.value,
+          quantite_ajustee: parseInt(quantite_ajustee.split("+")[1].trim()),
+          raison: RaisonRef.current?.value,
+        });
+      }
+      onClose();
+      fetchProducts(15);
+      alert("Ajustement enregistré avec succès");
+    } catch (error) {
+      console.log(error);
     }
-    onClose();
-    fetchProducts(15);
-    alert("Ajustement enregistré avec succès");
   };
 
   return (

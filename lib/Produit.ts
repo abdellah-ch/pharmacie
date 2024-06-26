@@ -315,3 +315,26 @@ export async function createAjustement(input: CreateAjustementInput) {
     };
   });
 }
+
+export const fetchActivePercentage = async () => {
+  try {
+    const totalProducts = await prisma.produit.count();
+
+    // Count products that have at least one CommandeItem
+    const activeProducts = await prisma.produit.count({
+      where: {
+        commandeItems: {
+          some: {} // This checks if there is at least one CommandeItem
+        }
+      },
+    });
+
+    const activePercentage = (activeProducts / totalProducts) * 100;
+        console.log(`Active Products: ${activeProducts}, Total Products: ${totalProducts}, Active Percentage: ${activePercentage}`);
+
+    return activePercentage;
+  } catch (error) {
+    console.error('Error fetching active percentage:', error);
+    throw error;
+  }
+};
