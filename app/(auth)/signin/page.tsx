@@ -27,7 +27,7 @@ const SignIn = () => {
   };
 
   return (
-    <div className="bg-green-200 text-white h-[100vh] flex justify-center items-center">
+    <div className="bg-blue-200 text-white h-[100vh] flex justify-center items-center">
       <div className=" bg-slate-800 border-slate-400 rounded-md shadow-lg  backdrop-blur-sm bg-opacity-30 relative p-8">
         <div className="px-6 py-4">
           <div className="flex justify-center mx-auto">
