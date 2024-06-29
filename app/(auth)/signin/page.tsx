@@ -27,43 +27,47 @@ const SignIn = () => {
   };
 
   return (
-    <div className="bg-[#f7f7fe] h-[100vh] flex justify-center items-center">
-      <div className="w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-800">
+    <div className="bg-green-200 text-white h-[100vh] flex justify-center items-center">
+      <div className=" bg-slate-800 border-slate-400 rounded-md shadow-lg  backdrop-blur-sm bg-opacity-30 relative p-8">
         <div className="px-6 py-4">
           <div className="flex justify-center mx-auto">
             <img className="" width={60} src="/images/logo.png" alt="Logo" />
           </div>
 
-          <p className="mt-1 text-center text-gray-500 dark:text-gray-400">
-            Connectez-vous
-          </p>
+          <p className="mt-1 text-center ">Connectez-vous</p>
 
-          <div className="w-full mt-4">
+          <div className="relative my-4">
             <input
               ref={IdRef}
-              className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-500 bg-white border rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-blue-300"
+              className="block w-72 py-2.5 px-0 text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:text-white focus:border-blue-600 peer"
               type="text"
-              placeholder="identifiant "
               aria-label="identifiant"
               autoComplete="off"
+              placeholder=" "
             />
+            <label className="absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 left-0 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+              Identifiant
+            </label>
           </div>
 
-          <div className="w-full mt-4">
+          <div className="relative my-4">
             <input
               ref={PasswordRef}
-              className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-500 bg-white border rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-blue-300"
+              className="block w-72 py-2.5 px-0 text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:text-white focus:border-blue-600 peer"
               type="password"
               autoComplete="off"
-              placeholder="Mot de passe"
               aria-label="Mot de passe"
+              placeholder=" "
             />
+            <label className="absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 left-0 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+              Mot de passe
+            </label>
           </div>
 
           <div className="flex items-center justify-end mt-6">
             <button
               onClick={handleSubmit}
-              className="px-6 py-2 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50"
+              className="w-full mb-4 text-[18px] mt-6 rounded-full bg-white text-emerald-800 hover:bg-emerald-600 hover:text-white py-2"
             >
               Se connecter
             </button>
