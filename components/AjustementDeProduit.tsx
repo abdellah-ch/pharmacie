@@ -59,16 +59,26 @@ const AjustementDeProduit = (props: {
         RaisonRef.current?.value &&
         DescriptionRef.current?.value
       ) {
-        await createAjustement({
-          produit_id: SelectedProduct?.produit_id,
-          NumeroRef: NumRef.current?.value,
-          quantite_ajustee: parseInt(quantite_ajustee.split("+")[1].trim()),
-          raison: RaisonRef.current?.value,
-        });
+        if (quantite_ajustee.includes("+")) {
+          await createAjustement({
+            produit_id: SelectedProduct?.produit_id,
+            NumeroRef: NumRef.current?.value,
+            quantite_ajustee: parseInt(quantite_ajustee.split("+")[1].trim()),
+            raison: RaisonRef.current?.value,
+          });
+        } else {
+          await createAjustement({
+            produit_id: SelectedProduct?.produit_id,
+            NumeroRef: NumRef.current?.value,
+            quantite_ajustee: -parseInt(quantite_ajustee.split("-")[1].trim()),
+            raison: RaisonRef.current?.value,
+          });
+        }
+
+        onClose();
+        fetchProducts(15);
+        alert("Ajustement enregistré avec succès");
       }
-      onClose();
-      fetchProducts(15);
-      alert("Ajustement enregistré avec succès");
     } catch (error) {
       console.log(error);
     }
